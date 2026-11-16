@@ -16,7 +16,9 @@ Dokumentasi ini adalah sumber kebenaran (*single source of truth*) pengembangan 
 | **5** | **Inbox, Template, Tempat Sampah, & Tautan Links** | [FASE_05_INBOX_ORGANISASI_LANJUT.md](FASE_05_INBOX_ORGANISASI_LANJUT.md) | ✅ Terimplementasi & Lulus Tes Lokal |
 | **6** | **Kalender & Blok Waktu** | [FASE_06_KALENDER_EVENT_BLOK_WAKTU.md](FASE_06_KALENDER_EVENT_BLOK_WAKTU.md) | ✅ Terimplementasi & Lulus Tes Lokal |
 | **7** | **Kebiasaan & Rutinitas** | [FASE_07_KEBIASAAN_RUTINITAS.md](FASE_07_KEBIASAAN_RUTINITAS.md) | ✅ Terimplementasi & Lulus Tes Lokal |
-| **8** | **Pengingat & Notifikasi** | `FASE_08_PENGINGAT_NOTIFIKASI.md` | 📋 Direncanakan Berikutnya |
+| **8** | **Pengingat & Notifikasi** | [FASE_08_PENGINGAT_NOTIFIKASI.md](FASE_08_PENGINGAT_NOTIFIKASI.md) | ✅ Terimplementasi & Lulus Tes Lokal |
+| **9** | **Money Tracker Inti** | [FASE_09_MONEY_TRACKER_INTI.md](FASE_09_MONEY_TRACKER_INTI.md) | ✅ Terimplementasi & Lulus Tes Lokal |
+| **10** | **Keuangan Lanjutan (Anggaran, Tabungan, & Utang)** | [FASE_10_KEUANGAN_LANJUTAN.md](FASE_10_KEUANGAN_LANJUTAN.md) | ✅ Terimplementasi & Lulus Tes Lokal |
 
 ---
 

@@ -18,6 +18,9 @@ Proyek ini dibangun menggunakan **Flutter** dan **Supabase PostgreSQL** berdasar
 | **5** | Inbox, Template, Tempat Sampah, & Tautan | **SELESAI** | Triase Inbox 1-Ketukan, Template generik, Tempat Sampah, Markdown ([docs/FASE_05_INBOX_ORGANISASI_LANJUT.md](file:///d:/Codee/self-management/docs/FASE_05_INBOX_ORGANISASI_LANJUT.md)) |
 | **6** | Kalender, Event, & Blok Waktu | **SELESAI** | Tampilan Bulan/Minggu/Hari/Agenda, Time Blocking, RRULE expansion ([docs/FASE_06_KALENDER_EVENT_BLOK_WAKTU.md](file:///d:/Codee/self-management/docs/FASE_06_KALENDER_EVENT_BLOK_WAKTU.md)) |
 | **7** | Kebiasaan & Rutinitas | **SELESAI** | Streak dinamis tanggal logis, checklist pagi/malam, riwayat heatmap ([docs/FASE_07_KEBIASAAN_RUTINITAS.md](file:///d:/Codee/self-management/docs/FASE_07_KEBIASAAN_RUTINITAS.md)) |
+| **8** | Pengingat & Notifikasi | **SELESAI** | Pengingat terjadwal, aksi tunda/selesai, skema token FCM/MCP ([docs/FASE_08_PENGINGAT_NOTIFIKASI.md](file:///d:/Codee/self-management/docs/FASE_08_PENGINGAT_NOTIFIKASI.md)) |
+| **9** | Money Tracker Inti | **SELESAI** | Dompet multi-rekening, kategori finansial, transaksi, saldo dinamis ([docs/FASE_09_MONEY_TRACKER_INTI.md](file:///d:/Codee/self-management/docs/FASE_09_MONEY_TRACKER_INTI.md)) |
+| **10** | Keuangan Lanjutan | **SELESAI** | Anggaran bulanan, target tabungan & setoran, manajemen utang piutang ([docs/FASE_10_KEUANGAN_LANJUTAN.md](file:///d:/Codee/self-management/docs/FASE_10_KEUANGAN_LANJUTAN.md)) |
 
 ---
 

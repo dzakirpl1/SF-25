@@ -31,6 +31,9 @@ import '../features/finance/domain/wallet.dart';
 import '../features/finance/presentation/finance_screen.dart';
 import '../features/finance/presentation/wallet_editor_screen.dart';
 import '../features/finance/presentation/transaction_editor_screen.dart';
+import '../features/finance/presentation/budget_screen.dart';
+import '../features/finance/presentation/savings_screen.dart';
+import '../features/finance/presentation/debt_screen.dart';
 import 'shell_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -195,6 +198,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/finance/transaction/edit',
         builder: (context, state) => const TransactionEditorScreen(),
+      ),
+      GoRoute(
+        path: '/finance/budgets',
+        builder: (context, state) => const BudgetScreen(),
+      ),
+      GoRoute(
+        path: '/finance/savings',
+        builder: (context, state) => const SavingsScreen(),
+      ),
+      GoRoute(
+        path: '/finance/debts',
+        builder: (context, state) => const DebtScreen(),
       ),
     ],
   );

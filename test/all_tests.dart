@@ -8,6 +8,7 @@ import 'unit/note_model_test.dart' as note_tests;
 import 'unit/recurrence_engine_test.dart' as recurrence_tests;
 import 'unit/reminder_test.dart' as reminder_tests;
 import 'unit/finance_core_test.dart' as finance_core_tests;
+import 'unit/finance_advanced_test.dart' as finance_advanced_tests;
 
 void main() {
   currency_tests.main();
@@ -20,4 +21,5 @@ void main() {
   habit_streak_tests.main();
   reminder_tests.main();
   finance_core_tests.main();
+  finance_advanced_tests.main();
 }

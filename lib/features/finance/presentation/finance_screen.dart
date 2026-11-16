@@ -144,6 +144,58 @@ class FinanceScreen extends ConsumerWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+
+              // Menu Cepat Keuangan Lanjutan (Fase 10)
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () => context.push('/finance/budgets'),
+                      icon:
+                          const Icon(Icons.pie_chart_outline_rounded, size: 18),
+                      label: const Text('Anggaran',
+                          style: TextStyle(fontSize: 12)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () => context.push('/finance/savings'),
+                      icon: const Icon(Icons.savings_outlined, size: 18),
+                      label: const Text('Tabungan',
+                          style: TextStyle(fontSize: 12)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () => context.push('/finance/debts'),
+                      icon: const Icon(Icons.compare_arrows_rounded, size: 18),
+                      label:
+                          const Text('Utang', style: TextStyle(fontSize: 12)),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 20),
 
               // 2. Daftar Dompet (Horizontal Carousel)
