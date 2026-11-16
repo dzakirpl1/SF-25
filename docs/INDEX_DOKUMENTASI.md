@@ -1,6 +1,6 @@
-# Indeks Dokumentasi Personal OS
+# Indeks Dokumentasi SF-25
 
-Dokumentasi ini adalah sumber kebenaran (*single source of truth*) pengembangan proyek **Personal OS**, mengacu langsung pada arsitektur `personal-os-master-blueprint-v2.json`.
+Dokumentasi ini adalah sumber kebenaran (*single source of truth*) pengembangan proyek **SF-25**, mengacu langsung pada arsitektur `personal-os-master-blueprint-v2.json`.
 
 ---
 
