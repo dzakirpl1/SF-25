@@ -6,6 +6,7 @@ import 'unit/habit_streak_test.dart' as habit_streak_tests;
 import 'unit/inbox_and_template_test.dart' as inbox_tests;
 import 'unit/note_model_test.dart' as note_tests;
 import 'unit/recurrence_engine_test.dart' as recurrence_tests;
+import 'unit/reminder_test.dart' as reminder_tests;
 
 void main() {
   currency_tests.main();
@@ -16,4 +17,5 @@ void main() {
   inbox_tests.main();
   calendar_tests.main();
   habit_streak_tests.main();
+  reminder_tests.main();
 }

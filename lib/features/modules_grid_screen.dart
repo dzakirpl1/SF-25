@@ -58,6 +58,12 @@ class ModulesGridScreen extends StatelessWidget {
         'fase': 'Fase 7 (Aktif)'
       },
       {
+        'title': 'Pengingat & Notifikasi',
+        'icon': Icons.alarm_rounded,
+        'route': '/reminders',
+        'fase': 'Fase 8 (Aktif)'
+      },
+      {
         'title': 'Keuangan (Money Tracker)',
         'icon': Icons.account_balance_wallet_outlined,
         'route': null,

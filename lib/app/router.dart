@@ -26,6 +26,7 @@ import '../features/habits/domain/routine.dart';
 import '../features/habits/presentation/habits_screen.dart';
 import '../features/habits/presentation/habit_editor_screen.dart';
 import '../features/habits/presentation/routine_editor_screen.dart';
+import '../features/reminders/presentation/reminders_screen.dart';
 import 'shell_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -171,6 +172,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           final routine = state.extra as Routine?;
           return RoutineEditorScreen(initialRoutine: routine);
         },
+      ),
+      GoRoute(
+        path: '/reminders',
+        builder: (context, state) => const RemindersScreen(),
       ),
     ],
   );
