@@ -51,7 +51,8 @@ class NoteActionsController extends StateNotifier<AsyncValue<void>> {
   final NoteRepository _repo;
   final Ref _ref;
 
-  NoteActionsController(this._repo, this._ref) : super(const AsyncValue.data(null));
+  NoteActionsController(this._repo, this._ref)
+      : super(const AsyncValue.data(null));
 
   Future<bool> createNote({
     String? title,
@@ -136,6 +137,7 @@ class NoteActionsController extends StateNotifier<AsyncValue<void>> {
   }
 }
 
-final noteActionsProvider = StateNotifierProvider<NoteActionsController, AsyncValue<void>>((ref) {
+final noteActionsProvider =
+    StateNotifierProvider<NoteActionsController, AsyncValue<void>>((ref) {
   return NoteActionsController(ref.watch(noteRepositoryProvider), ref);
 });

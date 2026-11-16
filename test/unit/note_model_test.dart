@@ -16,7 +16,9 @@ void main() {
       expect(note.displayTitle, 'Catatan Rapat');
     });
 
-    test('displayTitle menggunakan baris pertama konten jika judul null (Quick Capture)', () {
+    test(
+        'displayTitle menggunakan baris pertama konten jika judul null (Quick Capture)',
+        () {
       final note = Note(
         id: '2',
         userId: 'u1',

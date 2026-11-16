@@ -11,7 +11,8 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController(text: 'haisayang2021@gmail.com');
+  final _emailController =
+      TextEditingController(text: 'haisayang2021@gmail.com');
   final _passwordController = TextEditingController(text: 'haisayang123');
   bool _obscurePassword = true;
 
@@ -32,7 +33,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     if (!success && mounted) {
       final errorState = ref.read(authControllerProvider);
-      final errorMsg = errorState.hasError ? errorState.error.toString() : 'Gagal masuk.';
+      final errorMsg =
+          errorState.hasError ? errorState.error.toString() : 'Gagal masuk.';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMsg),
@@ -116,7 +118,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                          _obscurePassword
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
                         ),
                         onPressed: () {
                           setState(() {
@@ -150,7 +154,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           )
                         : const Text(
                             'Masuk',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                   ),
                 ],

@@ -1,0 +1,2670 @@
+{
+  "blueprint_version": "2.1.0",
+  "meta": {
+    "name": "Personal OS",
+    "tagline": "Satu aplikasi untuk mengelola catatan, tugas, waktu, uang, kesehatan, belajar, dan kehidupan sehari-hari",
+    "platform": [
+      "Android"
+    ],
+    "platform_opsional": [
+      "Web (pengembangan dan tablet)"
+    ],
+    "bahasa_antarmuka": "id_ID",
+    "mata_uang_default": "IDR",
+    "fitur_ai": false,
+    "model_pengguna": "Satu pengguna (pemilik). Aplikasi untuk pemakaian pribadi, bukan untuk dirilis publik.",
+    "distribusi": "Sideload APK dengan release signing sendiri; tidak wajib masuk Play Store",
+    "bahasa_dokumen": "Indonesia",
+    "konektivitas": "Online-only. Supabase menjadi satu-satunya sumber data; tidak ada database lokal atau mode offline penuh."
+  },
+  "visi_dan_prinsip": {
+    "visi": "Sistem operasi pribadi yang menyatukan seluruh area hidup dalam satu tempat yang cepat, privat, dan bisa dipercaya.",
+    "prinsip": [
+      "Capture cepat lebih penting daripada struktur sempurna",
+      "Online-first: Supabase adalah sumber kebenaran tunggal, tanpa sinkronisasi offline",
+      "Data sensitif (uang, kesehatan, jurnal) wajib terlindungi RLS dan kunci aplikasi",
+      "RLS tetap wajib walau pengguna tunggal, karena anon key berada di dalam APK",
+      "Kerjakan per fase kecil dan catat status verifikasi dengan jujur",
+      "Setiap layar punya state loading, error, dan kosong",
+      "Antarmodul saling terhubung, bukan aplikasi terpisah dalam satu wadah",
+      "Data milik pemilik: ekspor dan backup penuh selalu tersedia",
+      "Tidak ada fitur AI"
+    ]
+  },
+  "dikecualikan": [
+    {
+      "item": "Tagihan dan langganan berulang",
+      "alasan": "Permintaan pemilik"
+    },
+    {
+      "item": "Kolaborasi, berbagi proyek, tugas untuk orang lain",
+      "alasan": "Aplikasi pribadi; juga menghindari perubahan besar pada model RLS"
+    },
+    {
+      "item": "Pendaftaran mandiri",
+      "alasan": "Satu akun dibuat manual; matikan email signup di Supabase"
+    },
+    {
+      "item": "Hapus akun publik, kebijakan privasi, syarat layanan",
+      "alasan": "Tidak dirilis ke publik"
+    },
+    {
+      "item": "Monetisasi, analitik penggunaan, mode demo, halaman bantuan publik",
+      "alasan": "Tidak relevan untuk pemakaian pribadi"
+    },
+    {
+      "item": "Fitur AI",
+      "alasan": "Sesuai keputusan proyek"
+    },
+    {
+      "item": "Mode offline penuh, database lokal SQLite, dan sinkronisasi dua arah",
+      "alasan": "Keputusan pemilik: memakai Supabase saja dan selalu online"
+    }
+  ],
+  "tech_stack": {
+    "klien": {
+      "framework": "Flutter (stable)",
+      "bahasa": "Dart",
+      "state_management": "Riverpod",
+      "navigasi": "GoRouter",
+      "tema": "Material 3, terang/gelap, warna aksen kustom",
+      "lokalisasi": "intl, locale id_ID",
+      "grafik": "fl_chart atau sejenisnya untuk statistik"
+    },
+    "backend": {
+      "platform": "Supabase",
+      "auth": "Supabase Auth (email + password), signup publik dimatikan",
+      "database": "PostgreSQL",
+      "keamanan_data": "Row Level Security di semua tabel",
+      "migrasi": "Berkas SQL berurutan di supabase/migrations",
+      "storage": "Supabase Storage, bucket privat untuk lampiran dan catatan suara",
+      "realtime": "Supabase Realtime (opsional) agar data di beberapa perangkat segar tanpa muat ulang",
+      "cache": "Cache memori lewat Riverpod, paginasi, dan debounce pencarian; tidak ada cache permanen"
+    },
+    "lokal": {
+      "database_lokal": "Tidak dipakai",
+      "penyimpanan_aman": "flutter_secure_storage untuk PIN dan token",
+      "biometrik": "local_auth",
+      "draft_sementara": "Penyimpanan ringan (shared_preferences atau secure storage) hanya untuk draft yang belum tersimpan bila koneksi gagal"
+    },
+    "notifikasi": {
+      "lokal": "flutter_local_notifications untuk pengingat terjadwal",
+      "push": "Firebase Cloud Messaging (Fase 8)"
+    },
+    "native_android": {
+      "widget": "home_widget atau Kotlin native",
+      "quick_settings_tile": "Kotlin TileService",
+      "share_sheet": "receive_sharing_intent",
+      "suara": "speech_to_text dan perekam audio",
+      "pemindaian_dokumen": "ML Kit Document Scanner",
+      "kalender_eksternal": "Google Calendar API (OAuth) atau CalendarContract"
+    },
+    "konfigurasi": {
+      "metode": "--dart-define saat build",
+      "variabel": [
+        "SUPABASE_URL",
+        "SUPABASE_ANON_KEY"
+      ],
+      "dilarang_di_klien": [
+        "service_role key",
+        "service account Firebase",
+        "private key"
+      ]
+    },
+    "alat_kualitas": [
+      "dart format",
+      "flutter analyze",
+      "flutter test",
+      "pgTAP untuk tes RLS"
+    ]
+  },
+  "arsitektur": {
+    "pola": "feature-first dengan lapisan data, domain, dan presentasi per fitur",
+    "struktur_folder": {
+      "lib/app/": "App, router, tema, layar gagal startup",
+      "lib/core/": "Konfigurasi, error, utilitas tanggal/zona waktu/uang, mesin pengulangan",
+      "lib/shared/": "Widget lintas fitur (state kosong, error, konfirmasi, pemilih tanggal)",
+      "lib/features/": "auth, settings, shell, home, notes, categories, inbox, templates, tasks, projects, calendar, habits, routines, reminders, focus, journal, review, goals, finance, health, media, learning, life, people, search, backup",
+      "supabase/migrations/": "Skema database dan RLS",
+      "supabase/tests/": "pgTAP isolasi dua akun dan uji fungsi",
+      "test/": "Unit dan widget test",
+      "docs/": "Sumber kebenaran proyek"
+    },
+    "lapisan_per_fitur": {
+      "data": "Repository dan sumber data Supabase",
+      "domain": "Model dan aturan bisnis",
+      "presentation": "Layar, widget, controller Riverpod"
+    },
+    "keputusan_kunci": [
+      "Waktu disimpan sebagai UTC (timestamptz); tanggal logis dihitung dari zona waktu dan day_start_hour di user_settings",
+      "Uang disimpan sebagai bigint dalam satuan terkecil (rupiah penuh), tidak memakai float",
+      "Saldo dompet dihitung dari saldo awal ditambah transaksi (view atau fungsi), bukan disimpan manual",
+      "Pengulangan memakai aturan teks mirip RRULE; tugas membuat instance berikutnya saat selesai, event diekspansi di klien",
+      "Relasi lintas modul memakai tabel links generik (source_type, source_id, target_type, target_id)",
+      "Template memakai satu tabel generik dengan payload jsonb dan kolom type",
+      "updated_at dan deleted_at pada tabel utama untuk soft delete, tempat sampah, dan pemulihan",
+      "Update memakai pemeriksaan updated_at (optimistic check) agar edit dari perangkat lain tidak tertimpa diam-diam",
+      "Koneksi gagal tidak boleh membuat crash atau menghilangkan ketikan: tampilkan banner, tombol coba lagi, dan simpan draft sementara"
+    ],
+    "penanganan_error": "Error terpusat, pesan ramah berbahasa Indonesia, log tidak memuat isi catatan atau data keuangan"
+  },
+  "fase_pengerjaan": [
+    {
+      "fase": 0,
+      "nama": "Audit dan persiapan",
+      "status": "selesai",
+      "fitur": [],
+      "kriteria_selesai": [
+        "docs/AUDIT_REPORT.md",
+        "flutter doctor bersih",
+        "Proyek Supabase siap"
+      ]
+    },
+    {
+      "fase": 1,
+      "nama": "Fondasi Flutter dan Supabase",
+      "status": "terimplementasi",
+      "fitur": [
+        "F-AUTH-01",
+        "F-AUTH-02",
+        "F-AUTH-03",
+        "F-SET-01",
+        "F-HOME-01"
+      ],
+      "kriteria_selesai": [
+        "Login, logout, pemulihan sesi",
+        "profiles dan user_settings otomatis",
+        "Tema dan locale id_ID",
+        "Migration 0001 dan 0002"
+      ]
+    },
+    {
+      "fase": 2,
+      "nama": "Catatan dan kategori",
+      "status": "terimplementasi",
+      "fitur": [
+        "F-NOTE-01",
+        "F-NOTE-02",
+        "F-NOTE-03",
+        "F-NOTE-04",
+        "F-CAT-01"
+      ],
+      "kriteria_selesai": [
+        "CRUD, arsip, soft delete, pencarian",
+        "Kategori dengan perlindungan hapus",
+        "Migration 0003"
+      ]
+    },
+    {
+      "fase": 3,
+      "nama": "Keamanan awal dan kunci aplikasi",
+      "status": "belum",
+      "fitur": [
+        "F-SEC-01",
+        "F-SEC-02",
+        "F-AUTH-04",
+        "F-SEC-03",
+        "F-SET-02",
+        "F-NET-01",
+        "F-NET-02"
+      ],
+      "kriteria_selesai": [
+        "Tes pgTAP dua akun lulus",
+        "Signup publik dimatikan",
+        "PIN dan biometrik aktif",
+        "Uji di HP fisik",
+        "Pengaturan dapat diubah (nama, tema, zona waktu)",
+        "Aplikasi tetap stabil saat internet putus; draft tidak hilang"
+      ],
+      "catatan": "Sengaja dimajukan sebelum modul sensitif (uang, kesehatan, jurnal)"
+    },
+    {
+      "fase": 4,
+      "nama": "Tugas dan proyek",
+      "status": "belum",
+      "fitur": [
+        "F-TASK-01",
+        "F-TASK-02",
+        "F-TASK-03",
+        "F-TASK-04",
+        "F-TASK-05",
+        "F-TASK-06",
+        "F-PROJ-01"
+      ],
+      "kriteria_selesai": [
+        "Tenggat, prioritas, subtugas, pengulangan",
+        "Filter hari ini, mendatang, terlambat, selesai",
+        "Ringkasan tugas di Beranda"
+      ]
+    },
+    {
+      "fase": 5,
+      "nama": "Inbox, template, dan penyempurnaan catatan",
+      "status": "belum",
+      "fitur": [
+        "F-INBX-01",
+        "F-INBX-02",
+        "F-TPL-01",
+        "F-NOTE-05",
+        "F-NOTE-06",
+        "F-NOTE-07",
+        "F-NOTE-08",
+        "F-TAG-01"
+      ],
+      "kriteria_selesai": [
+        "Inbox dapat dipilah jadi catatan atau tugas",
+        "Pin, tempat sampah, tag, Markdown",
+        "Template dapat dipakai ulang"
+      ]
+    },
+    {
+      "fase": 6,
+      "nama": "Kalender",
+      "status": "belum",
+      "fitur": [
+        "F-CAL-01",
+        "F-CAL-02",
+        "F-CAL-03",
+        "F-CAL-04"
+      ],
+      "kriteria_selesai": [
+        "Tampilan bulan, minggu, hari",
+        "Event dan tugas tampil bersama",
+        "Blok waktu",
+        "Zona waktu mengikuti pengaturan"
+      ]
+    },
+    {
+      "fase": 7,
+      "nama": "Kebiasaan dan rutinitas",
+      "status": "belum",
+      "fitur": [
+        "F-HAB-01",
+        "F-HAB-02",
+        "F-HAB-03",
+        "F-ROUT-01",
+        "F-ROUT-02"
+      ],
+      "kriteria_selesai": [
+        "Frekuensi fleksibel, streak, riwayat",
+        "Rutinitas pagi dan malam sebagai checklist"
+      ]
+    },
+    {
+      "fase": 8,
+      "nama": "Pengingat dan notifikasi",
+      "status": "belum",
+      "fitur": [
+        "F-REM-01",
+        "F-REM-02",
+        "F-REM-03",
+        "F-REM-04"
+      ],
+      "kriteria_selesai": [
+        "Notifikasi lokal andal",
+        "FCM terkonfigurasi",
+        "Tunda dan selesai dari notifikasi",
+        "Izin dan baterai Android ditangani"
+      ]
+    },
+    {
+      "fase": 9,
+      "nama": "Money Tracker inti",
+      "status": "belum",
+      "fitur": [
+        "F-FIN-01",
+        "F-FIN-02",
+        "F-FIN-03",
+        "F-FIN-04",
+        "F-FIN-05",
+        "F-FIN-06"
+      ],
+      "kriteria_selesai": [
+        "Banyak dompet, transaksi, transfer",
+        "Kategori dan sub-kategori",
+        "Ringkasan bulanan dan grafik",
+        "Format Rp 1.250.000"
+      ]
+    },
+    {
+      "fase": 10,
+      "nama": "Keuangan lanjutan",
+      "status": "belum",
+      "fitur": [
+        "F-BUD-01",
+        "F-BUD-02",
+        "F-SAV-01",
+        "F-SAV-02",
+        "F-DEBT-01",
+        "F-DEBT-02",
+        "F-FIN-07"
+      ],
+      "kriteria_selesai": [
+        "Anggaran per kategori dengan peringatan",
+        "Target tabungan dengan progres",
+        "Utang dan piutang dengan status lunas",
+        "Ekspor CSV"
+      ]
+    },
+    {
+      "fase": 11,
+      "nama": "Fokus dan waktu",
+      "status": "belum",
+      "fitur": [
+        "F-FOC-01",
+        "F-FOC-02",
+        "F-TIME-01",
+        "F-TIME-02"
+      ],
+      "kriteria_selesai": [
+        "Pomodoro terkait tugas",
+        "Pelacak waktu per proyek",
+        "Statistik fokus harian dan mingguan"
+      ]
+    },
+    {
+      "fase": 12,
+      "nama": "Refleksi dan tujuan",
+      "status": "belum",
+      "fitur": [
+        "F-JRN-01",
+        "F-JRN-02",
+        "F-MOOD-01",
+        "F-REV-01",
+        "F-REV-02",
+        "F-GOAL-01",
+        "F-GOAL-02",
+        "F-JRN-03"
+      ],
+      "kriteria_selesai": [
+        "Jurnal harian dengan prompt",
+        "Mood tracker",
+        "Review harian, mingguan, bulanan",
+        "Tujuan jangka panjang dengan hasil kunci",
+        "Kilas balik setahun lalu"
+      ]
+    },
+    {
+      "fase": 13,
+      "nama": "Kesehatan",
+      "status": "belum",
+      "fitur": [
+        "F-HLT-01",
+        "F-HLT-02",
+        "F-HLT-03",
+        "F-HLT-04",
+        "F-MED-01",
+        "F-MED-02",
+        "F-HLT-05"
+      ],
+      "kriteria_selesai": [
+        "Olahraga, tidur, air, berat badan",
+        "Obat dan suplemen dengan pengingat",
+        "Grafik tren"
+      ]
+    },
+    {
+      "fase": 14,
+      "nama": "Bacaan, tontonan, dan belajar",
+      "status": "belum",
+      "fitur": [
+        "F-MEDIA-01",
+        "F-MEDIA-02",
+        "F-LRN-01",
+        "F-LRN-02"
+      ],
+      "kriteria_selesai": [
+        "Daftar buku dan tontonan dengan status",
+        "Pelacak topik dan jam belajar"
+      ]
+    },
+    {
+      "fase": 15,
+      "nama": "Kehidupan sehari-hari",
+      "status": "belum",
+      "fitur": [
+        "F-SHOP-01",
+        "F-SHOP-02",
+        "F-WISH-01",
+        "F-DOC-01",
+        "F-VEH-01",
+        "F-VEH-02",
+        "F-TRIP-01",
+        "F-TRIP-02",
+        "F-TRIP-03"
+      ],
+      "kriteria_selesai": [
+        "Daftar belanja dan wishlist",
+        "Dokumen penting dengan pengingat kedaluwarsa",
+        "Perawatan kendaraan",
+        "Perjalanan dengan itinerary dan packing list"
+      ]
+    },
+    {
+      "fase": 16,
+      "nama": "Relasi",
+      "status": "belum",
+      "fitur": [
+        "F-PPL-01",
+        "F-PPL-02",
+        "F-PPL-03",
+        "F-PPL-04",
+        "F-GIFT-01"
+      ],
+      "kriteria_selesai": [
+        "Daftar orang, hari penting, pengingat menghubungi",
+        "Ide hadiah dan catatan per orang"
+      ]
+    },
+    {
+      "fase": 17,
+      "nama": "Sistem lanjutan",
+      "status": "belum",
+      "fitur": [
+        "F-SYS-01",
+        "F-SYS-02",
+        "F-SYS-03",
+        "F-SYS-04",
+        "F-SYS-05",
+        "F-SYS-06",
+        "F-SYS-07",
+        "F-SYS-08",
+        "F-SYS-09",
+        "F-SYS-10",
+        "F-SYS-11",
+        "F-NOTE-09",
+        "F-NOTE-10",
+        "F-NOTE-11",
+        "F-NET-03"
+      ],
+      "kriteria_selesai": [
+        "Pencarian global dan command palette",
+        "Share sheet, widget, Quick Settings tile, input suara",
+        "Ekspor dan impor, backup penuh",
+        "Lampiran, catatan suara, pemindaian dokumen",
+        "Riwayat versi catatan",
+        "Gestur, tema kustom, tablet dan web"
+      ]
+    },
+    {
+      "fase": 18,
+      "nama": "Integrasi kalender eksternal",
+      "status": "belum",
+      "fitur": [
+        "F-CAL-05",
+        "F-CAL-06"
+      ],
+      "kriteria_selesai": [
+        "Event Google Calendar tampil di kalender",
+        "Sinkronisasi dua arah yang stabil"
+      ]
+    },
+    {
+      "fase": 19,
+      "nama": "Statistik terpadu dan rilis pribadi",
+      "status": "belum",
+      "fitur": [
+        "F-INS-01",
+        "F-INS-02",
+        "F-REL-01",
+        "F-REL-02",
+        "F-REL-03"
+      ],
+      "kriteria_selesai": [
+        "Dasbor statistik lintas modul",
+        "Release signing sendiri",
+        "Pelaporan crash tanpa data pribadi",
+        "Dokumen pemulihan (restore) teruji"
+      ]
+    }
+  ],
+  "fitur": [
+    {
+      "id": "F-AUTH-01",
+      "modul": "auth",
+      "nama": "Login email dan password",
+      "fase": 1,
+      "prioritas": "wajib",
+      "status": "terimplementasi"
+    },
+    {
+      "id": "F-AUTH-02",
+      "modul": "auth",
+      "nama": "Logout",
+      "fase": 1,
+      "prioritas": "wajib",
+      "status": "terimplementasi"
+    },
+    {
+      "id": "F-AUTH-03",
+      "modul": "auth",
+      "nama": "Pemulihan sesi",
+      "fase": 1,
+      "prioritas": "wajib",
+      "status": "terimplementasi"
+    },
+    {
+      "id": "F-AUTH-04",
+      "modul": "auth",
+      "nama": "Matikan signup publik dan reset password lewat email",
+      "fase": 3,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-SET-01",
+      "modul": "settings",
+      "nama": "Halaman pengaturan (tampilan dasar)",
+      "fase": 1,
+      "prioritas": "wajib",
+      "status": "sebagian",
+      "catatan": "Masih read-only"
+    },
+    {
+      "id": "F-SET-02",
+      "modul": "settings",
+      "nama": "Ubah nama tampilan, tema, zona waktu, mata uang, awal minggu, jam awal hari, preferensi notifikasi",
+      "fase": 3,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-HOME-01",
+      "modul": "home",
+      "nama": "Beranda ringkasan hari ini",
+      "fase": 1,
+      "prioritas": "wajib",
+      "status": "sebagian",
+      "catatan": "Baru catatan terbaru; modul lain menambah kartu sendiri"
+    },
+    {
+      "id": "F-NOTE-01",
+      "modul": "notes",
+      "nama": "Daftar catatan dengan pencarian dan filter kategori",
+      "fase": 2,
+      "prioritas": "wajib",
+      "status": "terimplementasi"
+    },
+    {
+      "id": "F-NOTE-02",
+      "modul": "notes",
+      "nama": "Editor catatan (buat dan ubah)",
+      "fase": 2,
+      "prioritas": "wajib",
+      "status": "terimplementasi"
+    },
+    {
+      "id": "F-NOTE-03",
+      "modul": "notes",
+      "nama": "Quick Capture (isi tanpa judul)",
+      "fase": 2,
+      "prioritas": "wajib",
+      "status": "terimplementasi"
+    },
+    {
+      "id": "F-NOTE-04",
+      "modul": "notes",
+      "nama": "Arsip dan soft delete dengan konfirmasi",
+      "fase": 2,
+      "prioritas": "wajib",
+      "status": "terimplementasi"
+    },
+    {
+      "id": "F-CAT-01",
+      "modul": "categories",
+      "nama": "Kelola kategori catatan (hapus ditolak bila dipakai)",
+      "fase": 2,
+      "prioritas": "wajib",
+      "status": "terimplementasi"
+    },
+    {
+      "id": "F-NOTE-05",
+      "modul": "notes",
+      "nama": "Pin catatan penting",
+      "fase": 5,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-NOTE-06",
+      "modul": "notes",
+      "nama": "Tempat sampah dengan pemulihan dan hapus permanen otomatis setelah N hari",
+      "fase": 5,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-NOTE-07",
+      "modul": "notes",
+      "nama": "Format Markdown dan checklist di dalam catatan",
+      "fase": 5,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-NOTE-08",
+      "modul": "notes",
+      "nama": "Tautan antar item (catatan ke tugas, proyek, orang, dan lainnya)",
+      "fase": 5,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-TAG-01",
+      "modul": "tags",
+      "nama": "Tag ganda selain kategori tunggal",
+      "fase": 5,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-NOTE-09",
+      "modul": "notes",
+      "nama": "Riwayat versi catatan dan kembalikan versi lama",
+      "fase": 17,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-NOTE-10",
+      "modul": "notes",
+      "nama": "Catatan suara (rekam, simpan, putar)",
+      "fase": 17,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-NOTE-11",
+      "modul": "notes",
+      "nama": "Pindai dokumen dengan kamera menjadi lampiran catatan",
+      "fase": 17,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-INBX-01",
+      "modul": "inbox",
+      "nama": "Inbox: tampung apa saja dengan satu ketukan",
+      "fase": 5,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-INBX-02",
+      "modul": "inbox",
+      "nama": "Pilah item inbox menjadi catatan, tugas, event, atau transaksi",
+      "fase": 5,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-TPL-01",
+      "modul": "templates",
+      "nama": "Template catatan, daftar tugas, belanja, dan checklist yang dapat dipakai ulang",
+      "fase": 5,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-TASK-01",
+      "modul": "tasks",
+      "nama": "CRUD tugas dengan judul, deskripsi, status",
+      "fase": 4,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-TASK-02",
+      "modul": "tasks",
+      "nama": "Tenggat dan prioritas",
+      "fase": 4,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-TASK-03",
+      "modul": "tasks",
+      "nama": "Subtugas (checklist)",
+      "fase": 4,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-TASK-04",
+      "modul": "tasks",
+      "nama": "Filter hari ini, mendatang, terlambat, selesai",
+      "fase": 4,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-TASK-05",
+      "modul": "tasks",
+      "nama": "Tugas berulang",
+      "fase": 4,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-TASK-06",
+      "modul": "tasks",
+      "nama": "Pengurutan prioritas otomatis ringan dan matriks Eisenhower (tanpa AI)",
+      "fase": 4,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-PROJ-01",
+      "modul": "projects",
+      "nama": "Proyek sebagai pengelompok tugas, catatan, dan waktu, dengan progres",
+      "fase": 4,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-CAL-01",
+      "modul": "calendar",
+      "nama": "Tampilan kalender bulan, minggu, hari",
+      "fase": 6,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-CAL-02",
+      "modul": "calendar",
+      "nama": "Event dengan jam mulai dan selesai, seharian, dan pengulangan",
+      "fase": 6,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-CAL-03",
+      "modul": "calendar",
+      "nama": "Tugas ber-tenggat, hari penting, dan dokumen kedaluwarsa tampil di kalender",
+      "fase": 6,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-CAL-04",
+      "modul": "calendar",
+      "nama": "Blok waktu untuk tugas atau fokus",
+      "fase": 6,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-CAL-05",
+      "modul": "calendar",
+      "nama": "Baca event dari Google Calendar",
+      "fase": 18,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-CAL-06",
+      "modul": "calendar",
+      "nama": "Sinkronisasi dua arah dengan Google Calendar",
+      "fase": 18,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-HAB-01",
+      "modul": "habits",
+      "nama": "Kebiasaan dengan frekuensi harian, mingguan, atau hari tertentu",
+      "fase": 7,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-HAB-02",
+      "modul": "habits",
+      "nama": "Centang harian, streak, dan riwayat",
+      "fase": 7,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-HAB-03",
+      "modul": "habits",
+      "nama": "Statistik kebiasaan mingguan dan bulanan",
+      "fase": 7,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-ROUT-01",
+      "modul": "routines",
+      "nama": "Rutinitas pagi dan malam sebagai checklist berulang",
+      "fase": 7,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-ROUT-02",
+      "modul": "routines",
+      "nama": "Riwayat penyelesaian rutinitas",
+      "fase": 7,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-REM-01",
+      "modul": "reminders",
+      "nama": "Notifikasi lokal terjadwal untuk tugas, event, obat, dokumen, dan hari penting",
+      "fase": 8,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-REM-02",
+      "modul": "reminders",
+      "nama": "Notifikasi push (FCM)",
+      "fase": 8,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-REM-03",
+      "modul": "reminders",
+      "nama": "Tunda dan tandai selesai dari notifikasi",
+      "fase": 8,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-REM-04",
+      "modul": "reminders",
+      "nama": "Penanganan izin notifikasi, alarm tepat, optimasi baterai, dan restart perangkat",
+      "fase": 8,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-FIN-01",
+      "modul": "finance",
+      "nama": "Banyak dompet (tunai, bank, e-wallet) dengan saldo awal",
+      "fase": 9,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-FIN-02",
+      "modul": "finance",
+      "nama": "Catat pemasukan dan pengeluaran dengan nominal, kategori, tanggal, catatan",
+      "fase": 9,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-FIN-03",
+      "modul": "finance",
+      "nama": "Transfer antar dompet (tidak dihitung sebagai pengeluaran)",
+      "fase": 9,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-FIN-04",
+      "modul": "finance",
+      "nama": "Kategori dan sub-kategori keuangan yang dapat diubah",
+      "fase": 9,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-FIN-05",
+      "modul": "finance",
+      "nama": "Ringkasan bulanan dan grafik per kategori",
+      "fase": 9,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-FIN-06",
+      "modul": "finance",
+      "nama": "Format rupiah dan input nominal cepat",
+      "fase": 9,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-FIN-07",
+      "modul": "finance",
+      "nama": "Ekspor transaksi ke CSV",
+      "fase": 10,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-BUD-01",
+      "modul": "budget",
+      "nama": "Anggaran per kategori per bulan",
+      "fase": 10,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-BUD-02",
+      "modul": "budget",
+      "nama": "Peringatan saat anggaran hampir habis atau terlampaui",
+      "fase": 10,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-SAV-01",
+      "modul": "savings",
+      "nama": "Target tabungan (dana darurat, liburan, gadget) dengan nominal dan tenggat",
+      "fase": 10,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-SAV-02",
+      "modul": "savings",
+      "nama": "Setoran ke target dan progres",
+      "fase": 10,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-DEBT-01",
+      "modul": "debts",
+      "nama": "Catat utang dan piutang (siapa, berapa, jatuh tempo)",
+      "fase": 10,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-DEBT-02",
+      "modul": "debts",
+      "nama": "Pembayaran cicilan dan status lunas",
+      "fase": 10,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-FOC-01",
+      "modul": "focus",
+      "nama": "Timer Pomodoro dengan durasi dapat diatur",
+      "fase": 11,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-FOC-02",
+      "modul": "focus",
+      "nama": "Catatan sesi fokus dan kaitan ke tugas",
+      "fase": 11,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-TIME-01",
+      "modul": "time",
+      "nama": "Pelacak waktu per proyek atau aktivitas",
+      "fase": 11,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-TIME-02",
+      "modul": "time",
+      "nama": "Statistik waktu dan fokus harian dan mingguan",
+      "fase": 11,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-JRN-01",
+      "modul": "journal",
+      "nama": "Jurnal harian",
+      "fase": 12,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-JRN-02",
+      "modul": "journal",
+      "nama": "Prompt refleksi (contoh: apa yang saya syukuri hari ini)",
+      "fase": 12,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-JRN-03",
+      "modul": "journal",
+      "nama": "Kilas balik: setahun lalu hari ini",
+      "fase": 12,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-MOOD-01",
+      "modul": "mood",
+      "nama": "Mood tracker harian dengan skala dan catatan",
+      "fase": 12,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-REV-01",
+      "modul": "review",
+      "nama": "Review harian dan mingguan dengan prompt tetap",
+      "fase": 12,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-REV-02",
+      "modul": "review",
+      "nama": "Review bulanan yang merangkum tugas, kebiasaan, mood, dan pengeluaran",
+      "fase": 12,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-GOAL-01",
+      "modul": "goals",
+      "nama": "Tujuan jangka panjang dengan tenggat",
+      "fase": 12,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-GOAL-02",
+      "modul": "goals",
+      "nama": "Hasil kunci terukur dan progres otomatis dari tugas atau kebiasaan terkait",
+      "fase": 12,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-HLT-01",
+      "modul": "health",
+      "nama": "Pelacak olahraga (jenis, durasi, catatan)",
+      "fase": 13,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-HLT-02",
+      "modul": "health",
+      "nama": "Pelacak tidur (jam tidur, bangun, kualitas)",
+      "fase": 13,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-HLT-03",
+      "modul": "health",
+      "nama": "Pelacak air minum",
+      "fase": 13,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-HLT-04",
+      "modul": "health",
+      "nama": "Berat badan dan ukuran tubuh dengan grafik tren",
+      "fase": 13,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-HLT-05",
+      "modul": "health",
+      "nama": "Catatan makan harian (opsional, tanpa target kalori ketat)",
+      "fase": 13,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-MED-01",
+      "modul": "medication",
+      "nama": "Daftar obat dan suplemen dengan jadwal",
+      "fase": 13,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-MED-02",
+      "modul": "medication",
+      "nama": "Pengingat minum obat dan riwayat kepatuhan",
+      "fase": 13,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-MEDIA-01",
+      "modul": "media",
+      "nama": "Daftar bacaan: ingin, sedang, selesai, dengan catatan",
+      "fase": 14,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-MEDIA-02",
+      "modul": "media",
+      "nama": "Daftar tontonan (film, serial, kursus) dengan status dan rating",
+      "fase": 14,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-LRN-01",
+      "modul": "learning",
+      "nama": "Topik belajar dengan sumber dan tujuan",
+      "fase": 14,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-LRN-02",
+      "modul": "learning",
+      "nama": "Catat sesi belajar dan jam belajar",
+      "fase": 14,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-SHOP-01",
+      "modul": "shopping",
+      "nama": "Daftar belanja dengan centang",
+      "fase": 15,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-SHOP-02",
+      "modul": "shopping",
+      "nama": "Daftar belanja dari template",
+      "fase": 15,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-WISH-01",
+      "modul": "wishlist",
+      "nama": "Wishlist dengan harga, tautan, dan prioritas",
+      "fase": 15,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-DOC-01",
+      "modul": "documents",
+      "nama": "Dokumen penting dengan tanggal kedaluwarsa (SIM, STNK, paspor, garansi) dan pengingat perpanjangan",
+      "fase": 15,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-VEH-01",
+      "modul": "vehicles",
+      "nama": "Data kendaraan",
+      "fase": 15,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-VEH-02",
+      "modul": "vehicles",
+      "nama": "Servis berkala, ganti oli, pajak tahunan, dengan pengingat",
+      "fase": 15,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-TRIP-01",
+      "modul": "trips",
+      "nama": "Perjalanan dengan tanggal dan tujuan",
+      "fase": 15,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-TRIP-02",
+      "modul": "trips",
+      "nama": "Itinerary per hari",
+      "fase": 15,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-TRIP-03",
+      "modul": "trips",
+      "nama": "Packing list dan anggaran perjalanan",
+      "fase": 15,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-PPL-01",
+      "modul": "people",
+      "nama": "Daftar orang dengan kontak dan catatan",
+      "fase": 16,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-PPL-02",
+      "modul": "people",
+      "nama": "Hari penting (ulang tahun, hari jadi) dengan pengingat",
+      "fase": 16,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-PPL-03",
+      "modul": "people",
+      "nama": "Pengingat menghubungi secara berkala",
+      "fase": 16,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-PPL-04",
+      "modul": "people",
+      "nama": "Catatan per orang (hal yang perlu diingat)",
+      "fase": 16,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-GIFT-01",
+      "modul": "gifts",
+      "nama": "Ide hadiah per orang",
+      "fase": 16,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-SEC-01",
+      "modul": "security",
+      "nama": "Tes isolasi RLS dua akun (pgTAP) dan uji fungsi database",
+      "fase": 3,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-SEC-02",
+      "modul": "security",
+      "nama": "Kunci aplikasi dengan PIN dan biometrik",
+      "fase": 3,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-SEC-03",
+      "modul": "security",
+      "nama": "Uji di HP Android fisik",
+      "fase": 3,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-SYS-01",
+      "modul": "system",
+      "nama": "Pencarian global lintas semua modul",
+      "fase": 17,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-SYS-02",
+      "modul": "system",
+      "nama": "Command palette dan tombol aksi cepat",
+      "fase": 17,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-SYS-03",
+      "modul": "system",
+      "nama": "Share sheet Android: kirim teks atau tautan dari aplikasi lain ke inbox",
+      "fase": 17,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-SYS-04",
+      "modul": "system",
+      "nama": "Widget layar utama (Quick Capture dan tugas hari ini)",
+      "fase": 17,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-SYS-05",
+      "modul": "system",
+      "nama": "Quick Settings tile dan pintasan Android untuk Quick Capture",
+      "fase": 17,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-SYS-06",
+      "modul": "system",
+      "nama": "Input suara (dikte teks) untuk Quick Capture",
+      "fase": 17,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-SYS-07",
+      "modul": "system",
+      "nama": "Ekspor semua data ke JSON dan CSV",
+      "fase": 17,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-SYS-08",
+      "modul": "system",
+      "nama": "Impor dari aplikasi lain (Google Keep, Todoist, Notion via CSV)",
+      "fase": 17,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-SYS-09",
+      "modul": "system",
+      "nama": "Lampiran gambar dan file di bucket privat",
+      "fase": 17,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-SYS-10",
+      "modul": "system",
+      "nama": "Gestur geser: selesai, arsip, tunda; tema dan warna aksen kustom",
+      "fase": 17,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-SYS-11",
+      "modul": "system",
+      "nama": "Layout adaptif untuk tablet dan web, onboarding singkat",
+      "fase": 17,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-INS-01",
+      "modul": "insights",
+      "nama": "Dasbor statistik lintas modul (tugas selesai, kebiasaan, fokus, mood, pengeluaran)",
+      "fase": 19,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-INS-02",
+      "modul": "insights",
+      "nama": "Tren mingguan dan bulanan dengan perbandingan periode",
+      "fase": 19,
+      "prioritas": "rendah",
+      "status": "belum"
+    },
+    {
+      "id": "F-REL-01",
+      "modul": "release",
+      "nama": "Release signing dengan keystore sendiri",
+      "fase": 19,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-REL-02",
+      "modul": "release",
+      "nama": "Pelaporan crash tanpa data pribadi",
+      "fase": 19,
+      "prioritas": "sedang",
+      "status": "belum"
+    },
+    {
+      "id": "F-REL-03",
+      "modul": "release",
+      "nama": "Prosedur backup berkala dan pemulihan yang sudah diuji",
+      "fase": 19,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-NET-01",
+      "modul": "network",
+      "nama": "Penanganan koneksi: banner tanpa internet, tombol coba lagi, tidak crash",
+      "fase": 3,
+      "prioritas": "wajib",
+      "status": "belum"
+    },
+    {
+      "id": "F-NET-02",
+      "modul": "network",
+      "nama": "Draft sementara di perangkat untuk editor catatan, jurnal, dan transaksi bila simpan gagal",
+      "fase": 3,
+      "prioritas": "tinggi",
+      "status": "belum"
+    },
+    {
+      "id": "F-NET-03",
+      "modul": "network",
+      "nama": "Realtime refresh antar perangkat (opsional)",
+      "fase": 17,
+      "prioritas": "rendah",
+      "status": "belum"
+    }
+  ],
+  "model_data": {
+    "konvensi": {
+      "primary_key": "uuid default gen_random_uuid()",
+      "kolom_umum": [
+        "user_id uuid not null references auth.users",
+        "created_at timestamptz",
+        "updated_at timestamptz"
+      ],
+      "soft_delete": "deleted_at timestamptz nullable pada tabel utama",
+      "rls": "Semua tabel: user_id = auth.uid() untuk select, insert, update, delete",
+      "fk_komposit": "Relasi antar tabel memakai FK (id, user_id) agar tidak bisa lintas pengguna",
+      "uang": "bigint dalam rupiah penuh, tanpa float",
+      "tanggal": "timestamptz untuk momen, date untuk hari logis"
+    },
+    "tabel": [
+      {
+        "nama": "profiles",
+        "fase": 1,
+        "kolom": [
+          "id (pk = auth.users.id)",
+          "display_name",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      {
+        "nama": "user_settings",
+        "fase": 1,
+        "kolom": [
+          "user_id (pk)",
+          "theme",
+          "accent_color",
+          "timezone",
+          "locale",
+          "currency",
+          "week_start",
+          "day_start_hour",
+          "notification_prefs jsonb",
+          "app_lock_enabled"
+        ]
+      },
+      {
+        "nama": "note_categories",
+        "fase": 2,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "color",
+          "created_at"
+        ],
+        "aturan": [
+          "Nama unik per pengguna",
+          "Hapus lewat fungsi delete_note_category"
+        ]
+      },
+      {
+        "nama": "notes",
+        "fase": 2,
+        "kolom": [
+          "id",
+          "user_id",
+          "category_id",
+          "title",
+          "content",
+          "is_pinned",
+          "archived_at",
+          "deleted_at",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      {
+        "nama": "tags",
+        "fase": 5,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "color"
+        ]
+      },
+      {
+        "nama": "note_tags",
+        "fase": 5,
+        "kolom": [
+          "note_id",
+          "tag_id",
+          "user_id"
+        ]
+      },
+      {
+        "nama": "note_versions",
+        "fase": 17,
+        "kolom": [
+          "id",
+          "user_id",
+          "note_id",
+          "title",
+          "content",
+          "saved_at"
+        ]
+      },
+      {
+        "nama": "templates",
+        "fase": 5,
+        "kolom": [
+          "id",
+          "user_id",
+          "type (note|task_list|shopping|checklist|trip)",
+          "name",
+          "payload jsonb"
+        ]
+      },
+      {
+        "nama": "inbox_items",
+        "fase": 5,
+        "kolom": [
+          "id",
+          "user_id",
+          "content",
+          "source (manual|share|voice|widget)",
+          "processed_at",
+          "converted_type",
+          "converted_id",
+          "created_at"
+        ]
+      },
+      {
+        "nama": "projects",
+        "fase": 4,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "description",
+          "status",
+          "target_date",
+          "archived_at",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      {
+        "nama": "tasks",
+        "fase": 4,
+        "kolom": [
+          "id",
+          "user_id",
+          "project_id",
+          "title",
+          "description",
+          "status",
+          "priority",
+          "is_important",
+          "is_urgent",
+          "due_at",
+          "completed_at",
+          "recurrence_rule",
+          "deleted_at",
+          "created_at",
+          "updated_at"
+        ],
+        "indeks": [
+          "(user_id, status, due_at)"
+        ]
+      },
+      {
+        "nama": "subtasks",
+        "fase": 4,
+        "kolom": [
+          "id",
+          "user_id",
+          "task_id",
+          "title",
+          "is_done",
+          "position"
+        ]
+      },
+      {
+        "nama": "events",
+        "fase": 6,
+        "kolom": [
+          "id",
+          "user_id",
+          "title",
+          "description",
+          "starts_at",
+          "ends_at",
+          "all_day",
+          "location",
+          "recurrence_rule",
+          "linked_task_id",
+          "external_id",
+          "deleted_at",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      {
+        "nama": "habits",
+        "fase": 7,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "frequency_type",
+          "frequency_config jsonb",
+          "target_per_period",
+          "archived_at",
+          "created_at"
+        ]
+      },
+      {
+        "nama": "habit_logs",
+        "fase": 7,
+        "kolom": [
+          "id",
+          "user_id",
+          "habit_id",
+          "log_date",
+          "done",
+          "note"
+        ],
+        "aturan": [
+          "Unik (habit_id, log_date)"
+        ]
+      },
+      {
+        "nama": "routines",
+        "fase": 7,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "time_of_day (morning|evening|custom)",
+          "active_days jsonb"
+        ]
+      },
+      {
+        "nama": "routine_steps",
+        "fase": 7,
+        "kolom": [
+          "id",
+          "user_id",
+          "routine_id",
+          "title",
+          "position"
+        ]
+      },
+      {
+        "nama": "routine_logs",
+        "fase": 7,
+        "kolom": [
+          "id",
+          "user_id",
+          "routine_id",
+          "log_date",
+          "completed_step_ids jsonb"
+        ]
+      },
+      {
+        "nama": "reminders",
+        "fase": 8,
+        "kolom": [
+          "id",
+          "user_id",
+          "target_type",
+          "target_id",
+          "remind_at",
+          "status (scheduled|sent|snoozed|dismissed)",
+          "snoozed_until"
+        ]
+      },
+      {
+        "nama": "device_tokens",
+        "fase": 8,
+        "kolom": [
+          "id",
+          "user_id",
+          "fcm_token",
+          "platform",
+          "last_seen_at"
+        ]
+      },
+      {
+        "nama": "wallets",
+        "fase": 9,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "type (cash|bank|ewallet|other)",
+          "initial_balance bigint",
+          "color",
+          "archived_at"
+        ]
+      },
+      {
+        "nama": "fin_categories",
+        "fase": 9,
+        "kolom": [
+          "id",
+          "user_id",
+          "parent_id",
+          "name",
+          "kind (income|expense)",
+          "icon",
+          "color"
+        ]
+      },
+      {
+        "nama": "transactions",
+        "fase": 9,
+        "kolom": [
+          "id",
+          "user_id",
+          "wallet_id",
+          "to_wallet_id",
+          "type (income|expense|transfer)",
+          "amount bigint",
+          "category_id",
+          "occurred_at",
+          "note",
+          "deleted_at",
+          "created_at",
+          "updated_at"
+        ],
+        "aturan": [
+          "to_wallet_id wajib hanya untuk transfer",
+          "amount selalu positif"
+        ],
+        "indeks": [
+          "(user_id, occurred_at desc)"
+        ]
+      },
+      {
+        "nama": "budgets",
+        "fase": 10,
+        "kolom": [
+          "id",
+          "user_id",
+          "category_id",
+          "month date",
+          "limit_amount bigint"
+        ],
+        "aturan": [
+          "Unik (user_id, category_id, month)"
+        ]
+      },
+      {
+        "nama": "savings_goals",
+        "fase": 10,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "target_amount bigint",
+          "target_date",
+          "wallet_id",
+          "archived_at"
+        ]
+      },
+      {
+        "nama": "savings_contributions",
+        "fase": 10,
+        "kolom": [
+          "id",
+          "user_id",
+          "goal_id",
+          "amount bigint",
+          "contributed_at",
+          "transaction_id"
+        ]
+      },
+      {
+        "nama": "debts",
+        "fase": 10,
+        "kolom": [
+          "id",
+          "user_id",
+          "person_id",
+          "direction (owed_by_me|owed_to_me)",
+          "principal bigint",
+          "due_date",
+          "note",
+          "settled_at"
+        ]
+      },
+      {
+        "nama": "debt_payments",
+        "fase": 10,
+        "kolom": [
+          "id",
+          "user_id",
+          "debt_id",
+          "amount bigint",
+          "paid_at",
+          "transaction_id"
+        ]
+      },
+      {
+        "nama": "focus_sessions",
+        "fase": 11,
+        "kolom": [
+          "id",
+          "user_id",
+          "task_id",
+          "project_id",
+          "started_at",
+          "ended_at",
+          "planned_minutes",
+          "completed",
+          "note"
+        ]
+      },
+      {
+        "nama": "time_entries",
+        "fase": 11,
+        "kolom": [
+          "id",
+          "user_id",
+          "project_id",
+          "activity",
+          "started_at",
+          "ended_at",
+          "note"
+        ]
+      },
+      {
+        "nama": "journal_entries",
+        "fase": 12,
+        "kolom": [
+          "id",
+          "user_id",
+          "entry_date",
+          "prompt",
+          "content",
+          "created_at",
+          "updated_at"
+        ],
+        "aturan": [
+          "Unik (user_id, entry_date) bila satu entri per hari"
+        ]
+      },
+      {
+        "nama": "mood_logs",
+        "fase": 12,
+        "kolom": [
+          "id",
+          "user_id",
+          "log_date",
+          "score smallint",
+          "tags jsonb",
+          "note"
+        ]
+      },
+      {
+        "nama": "reviews",
+        "fase": 12,
+        "kolom": [
+          "id",
+          "user_id",
+          "period (daily|weekly|monthly)",
+          "period_start",
+          "answers jsonb",
+          "created_at"
+        ]
+      },
+      {
+        "nama": "goals",
+        "fase": 12,
+        "kolom": [
+          "id",
+          "user_id",
+          "title",
+          "description",
+          "target_date",
+          "status",
+          "archived_at"
+        ]
+      },
+      {
+        "nama": "key_results",
+        "fase": 12,
+        "kolom": [
+          "id",
+          "user_id",
+          "goal_id",
+          "title",
+          "metric_type (manual|tasks|habit)",
+          "target_value",
+          "current_value",
+          "linked_id"
+        ]
+      },
+      {
+        "nama": "workouts",
+        "fase": 13,
+        "kolom": [
+          "id",
+          "user_id",
+          "type",
+          "started_at",
+          "duration_minutes",
+          "note"
+        ]
+      },
+      {
+        "nama": "sleep_logs",
+        "fase": 13,
+        "kolom": [
+          "id",
+          "user_id",
+          "sleep_at",
+          "wake_at",
+          "quality smallint",
+          "note"
+        ]
+      },
+      {
+        "nama": "water_logs",
+        "fase": 13,
+        "kolom": [
+          "id",
+          "user_id",
+          "logged_at",
+          "amount_ml"
+        ]
+      },
+      {
+        "nama": "body_measurements",
+        "fase": 13,
+        "kolom": [
+          "id",
+          "user_id",
+          "measured_at",
+          "weight_kg numeric",
+          "measurements jsonb"
+        ]
+      },
+      {
+        "nama": "medications",
+        "fase": 13,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "dosage",
+          "schedule jsonb",
+          "start_date",
+          "end_date",
+          "active"
+        ]
+      },
+      {
+        "nama": "medication_logs",
+        "fase": 13,
+        "kolom": [
+          "id",
+          "user_id",
+          "medication_id",
+          "scheduled_at",
+          "taken_at",
+          "status (taken|skipped|missed)"
+        ]
+      },
+      {
+        "nama": "meal_logs",
+        "fase": 13,
+        "kolom": [
+          "id",
+          "user_id",
+          "eaten_at",
+          "description",
+          "note"
+        ],
+        "catatan": "Opsional; sengaja tanpa kolom target kalori"
+      },
+      {
+        "nama": "media_items",
+        "fase": 14,
+        "kolom": [
+          "id",
+          "user_id",
+          "type (book|film|series|course)",
+          "title",
+          "creator",
+          "status (want|in_progress|done)",
+          "rating",
+          "note",
+          "started_at",
+          "finished_at"
+        ]
+      },
+      {
+        "nama": "learning_topics",
+        "fase": 14,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "goal",
+          "resources jsonb",
+          "archived_at"
+        ]
+      },
+      {
+        "nama": "study_sessions",
+        "fase": 14,
+        "kolom": [
+          "id",
+          "user_id",
+          "topic_id",
+          "studied_at",
+          "minutes",
+          "note"
+        ]
+      },
+      {
+        "nama": "shopping_lists",
+        "fase": 15,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "archived_at"
+        ]
+      },
+      {
+        "nama": "shopping_items",
+        "fase": 15,
+        "kolom": [
+          "id",
+          "user_id",
+          "list_id",
+          "name",
+          "quantity",
+          "is_checked",
+          "position"
+        ]
+      },
+      {
+        "nama": "wishlist_items",
+        "fase": 15,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "price bigint",
+          "url",
+          "priority",
+          "purchased_at"
+        ]
+      },
+      {
+        "nama": "important_documents",
+        "fase": 15,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "doc_type",
+          "number_hint",
+          "issued_at",
+          "expires_at",
+          "note"
+        ],
+        "catatan": "Jangan simpan nomor penuh; cukup petunjuk atau lampiran terenkripsi di bucket privat"
+      },
+      {
+        "nama": "vehicles",
+        "fase": 15,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "plate_hint",
+          "odometer_km",
+          "tax_due_date",
+          "archived_at"
+        ]
+      },
+      {
+        "nama": "vehicle_services",
+        "fase": 15,
+        "kolom": [
+          "id",
+          "user_id",
+          "vehicle_id",
+          "service_type",
+          "serviced_at",
+          "odometer_km",
+          "cost bigint",
+          "next_due_date",
+          "next_due_km",
+          "note"
+        ]
+      },
+      {
+        "nama": "trips",
+        "fase": 15,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "destination",
+          "starts_on",
+          "ends_on",
+          "budget bigint"
+        ]
+      },
+      {
+        "nama": "trip_items",
+        "fase": 15,
+        "kolom": [
+          "id",
+          "user_id",
+          "trip_id",
+          "day_date",
+          "time",
+          "title",
+          "note",
+          "position"
+        ]
+      },
+      {
+        "nama": "packing_items",
+        "fase": 15,
+        "kolom": [
+          "id",
+          "user_id",
+          "trip_id",
+          "name",
+          "is_packed"
+        ]
+      },
+      {
+        "nama": "people",
+        "fase": 16,
+        "kolom": [
+          "id",
+          "user_id",
+          "name",
+          "relationship",
+          "phone",
+          "email",
+          "notes",
+          "contact_every_days",
+          "last_contacted_at",
+          "archived_at"
+        ]
+      },
+      {
+        "nama": "important_dates",
+        "fase": 16,
+        "kolom": [
+          "id",
+          "user_id",
+          "person_id",
+          "label",
+          "month",
+          "day",
+          "year",
+          "remind_days_before"
+        ]
+      },
+      {
+        "nama": "gift_ideas",
+        "fase": 16,
+        "kolom": [
+          "id",
+          "user_id",
+          "person_id",
+          "idea",
+          "price bigint",
+          "url",
+          "given_at"
+        ]
+      },
+      {
+        "nama": "attachments",
+        "fase": 17,
+        "kolom": [
+          "id",
+          "user_id",
+          "owner_type",
+          "owner_id",
+          "storage_path",
+          "mime_type",
+          "size_bytes",
+          "created_at"
+        ]
+      },
+      {
+        "nama": "links",
+        "fase": 5,
+        "kolom": [
+          "id",
+          "user_id",
+          "source_type",
+          "source_id",
+          "target_type",
+          "target_id",
+          "created_at"
+        ]
+      }
+    ],
+    "fungsi_database": [
+      {
+        "nama": "handle_new_user",
+        "tujuan": "Membuat profiles dan user_settings untuk pengguna baru"
+      },
+      {
+        "nama": "delete_note_category",
+        "tujuan": "Hapus kategori hanya bila tidak dipakai catatan aktif"
+      },
+      {
+        "nama": "wallet_balance",
+        "tujuan": "Menghitung saldo dompet dari saldo awal dan transaksi"
+      },
+      {
+        "nama": "monthly_summary",
+        "tujuan": "Ringkasan pemasukan, pengeluaran, dan per kategori per bulan"
+      },
+      {
+        "nama": "budget_status",
+        "tujuan": "Sisa anggaran per kategori bulan berjalan"
+      },
+      {
+        "nama": "habit_streak",
+        "tujuan": "Menghitung streak kebiasaan"
+      },
+      {
+        "nama": "export_all_data",
+        "tujuan": "Mengumpulkan seluruh data pengguna untuk ekspor (dijalankan dengan hak pengguna sendiri)"
+      }
+    ],
+    "migrasi": [
+      {
+        "berkas": "0001_init.sql",
+        "isi": "profiles, user_settings, RLS",
+        "status": "ada"
+      },
+      {
+        "berkas": "0002_explicit_grants.sql",
+        "isi": "Grant eksplisit",
+        "status": "ada"
+      },
+      {
+        "berkas": "0003_notes_categories.sql",
+        "isi": "notes, categories, RLS, FK komposit, fungsi hapus kategori",
+        "status": "ada"
+      },
+      {
+        "berkas": "0004_security_hardening.sql",
+        "isi": "Fungsi bantu RLS, tambahan kolom user_settings",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0005_tasks_projects.sql",
+        "isi": "projects, tasks, subtasks",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0006_inbox_tags_templates_links.sql",
+        "isi": "inbox_items, tags, note_tags, templates, links, notes.is_pinned",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0007_events.sql",
+        "isi": "events",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0008_habits_routines.sql",
+        "isi": "habits, habit_logs, routines, steps, logs",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0009_reminders.sql",
+        "isi": "reminders, device_tokens",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0010_finance_core.sql",
+        "isi": "wallets, fin_categories, transactions, fungsi saldo dan ringkasan",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0011_finance_advanced.sql",
+        "isi": "budgets, savings, debts",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0012_focus_time.sql",
+        "isi": "focus_sessions, time_entries",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0013_reflection_goals.sql",
+        "isi": "journal, mood, reviews, goals, key_results",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0014_health.sql",
+        "isi": "workouts, sleep, water, body, medications, meals",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0015_media_learning.sql",
+        "isi": "media_items, learning_topics, study_sessions",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0016_life_admin.sql",
+        "isi": "shopping, wishlist, documents, vehicles, trips",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0017_people.sql",
+        "isi": "people, important_dates, gift_ideas",
+        "status": "rencana"
+      },
+      {
+        "berkas": "0018_attachments_versions.sql",
+        "isi": "attachments, note_versions, kebijakan storage",
+        "status": "rencana"
+      }
+    ]
+  },
+  "keterhubungan_antarmodul": [
+    {
+      "dari": "Tugas berulang dan event",
+      "ke": "Pengingat",
+      "efek": "Pengingat dibuat otomatis"
+    },
+    {
+      "dari": "Obat, dokumen penting, servis kendaraan, hari penting",
+      "ke": "Pengingat dan Kalender",
+      "efek": "Tanggal jatuh tempo muncul di kalender dan memicu notifikasi"
+    },
+    {
+      "dari": "Utang dan setoran tabungan",
+      "ke": "Transaksi",
+      "efek": "Pembayaran dan setoran dapat tercatat sebagai transaksi pada dompet terkait"
+    },
+    {
+      "dari": "Utang",
+      "ke": "Orang",
+      "efek": "Utang terhubung ke data orang"
+    },
+    {
+      "dari": "Sesi fokus dan pelacak waktu",
+      "ke": "Tugas dan Proyek",
+      "efek": "Waktu terakumulasi per tugas dan proyek"
+    },
+    {
+      "dari": "Tujuan dan hasil kunci",
+      "ke": "Tugas dan Kebiasaan",
+      "efek": "Progres dihitung otomatis"
+    },
+    {
+      "dari": "Inbox",
+      "ke": "Catatan, Tugas, Event, Transaksi",
+      "efek": "Item dipilah menjadi modul tujuan"
+    },
+    {
+      "dari": "Review bulanan",
+      "ke": "Tugas, Kebiasaan, Mood, Keuangan",
+      "efek": "Merangkum data lintas modul"
+    },
+    {
+      "dari": "Perjalanan",
+      "ke": "Kalender dan Keuangan",
+      "efek": "Tanggal tampil di kalender, anggaran dibandingkan pengeluaran"
+    },
+    {
+      "dari": "Semua modul",
+      "ke": "Pencarian global dan Links",
+      "efek": "Satu pencarian dan tautan antar item"
+    }
+  ],
+  "navigasi_dan_layar": {
+    "bottom_navigation": [
+      "Beranda",
+      "Catatan",
+      "Tugas",
+      "Kalender",
+      "Modul"
+    ],
+    "tab_modul": "Layar kisi berisi semua modul lain: Kebiasaan, Keuangan, Fokus, Jurnal, Kesehatan, Belajar, Kehidupan, Orang, Pengaturan",
+    "aksi_cepat_global": "Tombol tambah mengambang membuka Quick Capture ke inbox dari layar mana pun",
+    "rute_per_modul": {
+      "auth": [
+        "/login"
+      ],
+      "home": [
+        "/home"
+      ],
+      "notes": [
+        "/notes",
+        "/notes/:id",
+        "/notes/edit",
+        "/categories",
+        "/trash"
+      ],
+      "inbox": [
+        "/inbox"
+      ],
+      "tasks": [
+        "/tasks",
+        "/tasks/:id",
+        "/projects",
+        "/projects/:id"
+      ],
+      "calendar": [
+        "/calendar",
+        "/events/:id"
+      ],
+      "habits": [
+        "/habits",
+        "/habits/:id",
+        "/routines",
+        "/routines/:id"
+      ],
+      "finance": [
+        "/finance",
+        "/finance/wallets",
+        "/finance/transactions",
+        "/finance/transactions/:id",
+        "/finance/categories",
+        "/finance/budgets",
+        "/finance/savings",
+        "/finance/debts"
+      ],
+      "focus": [
+        "/focus",
+        "/time"
+      ],
+      "reflection": [
+        "/journal",
+        "/journal/:date",
+        "/mood",
+        "/reviews",
+        "/goals",
+        "/goals/:id"
+      ],
+      "health": [
+        "/health",
+        "/health/workouts",
+        "/health/sleep",
+        "/health/water",
+        "/health/body",
+        "/health/medications"
+      ],
+      "learning": [
+        "/media",
+        "/learning"
+      ],
+      "life": [
+        "/life/shopping",
+        "/life/wishlist",
+        "/life/documents",
+        "/life/vehicles",
+        "/life/trips",
+        "/life/trips/:id"
+      ],
+      "people": [
+        "/people",
+        "/people/:id"
+      ],
+      "system": [
+        "/search",
+        "/settings",
+        "/settings/backup",
+        "/insights"
+      ]
+    }
+  },
+  "beranda": {
+    "bagian": [
+      "Salam dan tanggal logis (zona waktu dan jam awal hari)",
+      "Tugas jatuh tempo hari ini dan terlambat",
+      "Agenda hari ini",
+      "Kebiasaan dan rutinitas yang belum dicentang",
+      "Obat yang harus diminum",
+      "Ringkasan pengeluaran hari ini dan sisa anggaran bulan ini",
+      "Hari penting dan dokumen yang akan kedaluwarsa",
+      "Inbox yang belum dipilah",
+      "Catatan terbaru",
+      "Quick Capture"
+    ],
+    "aturan": "Setiap kartu bisa disembunyikan dan diurutkan ulang di Pengaturan"
+  },
+  "keamanan": {
+    "aturan": [
+      "Hanya Project URL dan anon/publishable key di aplikasi",
+      "Signup publik dimatikan; satu akun milik pemilik",
+      "RLS aktif di semua tabel, tanpa pengecualian",
+      "Grant eksplisit per tabel dan per peran",
+      "FK komposit mencegah referensi lintas pengguna",
+      "Bucket storage privat dengan kebijakan berbasis user_id",
+      "Kunci aplikasi PIN dan biometrik sebelum modul sensitif dirilis",
+      "Jangan simpan nomor dokumen penuh atau kata sandi di aplikasi",
+      "Log dan crash report tidak memuat isi catatan, jurnal, atau data keuangan",
+      ".env, keystore, google-services.json, firebase_options.dart masuk .gitignore"
+    ],
+    "data_sensitif": [
+      "Keuangan",
+      "Kesehatan dan obat",
+      "Jurnal dan mood",
+      "Dokumen penting"
+    ],
+    "pengujian": [
+      "pgTAP: akun A tidak dapat membaca, mengubah, atau menghapus data akun B pada setiap tabel",
+      "Uji insert dengan user_id milik akun lain harus ditolak",
+      "Uji semua fungsi database dari akun yang salah"
+    ]
+  },
+  "notifikasi_android": {
+    "hal_yang_ditangani": [
+      "Izin POST_NOTIFICATIONS (Android 13+)",
+      "Izin alarm tepat bila diperlukan",
+      "Pengecualian optimasi baterai",
+      "Penjadwalan ulang setelah perangkat restart",
+      "Saluran notifikasi terpisah: tugas, event, kebiasaan, obat, dokumen, hari penting, anggaran",
+      "Jadwal notifikasi lokal dijadwalkan ulang setiap aplikasi dibuka atau data berubah, karena sumber data ada di server"
+    ]
+  },
+  "backup_dan_pemulihan": {
+    "strategi": [
+      "Ekspor penuh JSON dari dalam aplikasi secara berkala",
+      "Backup database Supabase terjadwal (dump manual bila paket tidak menyediakan backup otomatis)",
+      "Salinan backup disimpan di luar Supabase",
+      "Prosedur restore ditulis dan diuji minimal sekali sebelum data penting menumpuk"
+    ],
+    "catatan": "Karena Supabase adalah satu-satunya salinan data, backup di luar Supabase menjadi wajib, bukan opsional."
+  },
+  "kualitas_dan_pengujian": {
+    "tes": {
+      "unit": "Model, aturan bisnis, util uang dan tanggal, mesin pengulangan, perhitungan saldo, streak",
+      "widget": "Layar utama setiap fitur dan state loading, error, kosong",
+      "integrasi": "Alur login hingga buat catatan, transaksi, dan tugas",
+      "database": "pgTAP untuk RLS, fungsi, dan konsistensi saldo"
+    },
+    "perintah_pemeriksaan": [
+      "dart format lib test",
+      "flutter analyze",
+      "flutter test",
+      "flutter build apk --debug --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=..."
+    ],
+    "gerbang_per_fase": "Fase selesai hanya jika analyze, test, dan build lulus, dan status verifikasi dicatat jujur di docs"
+  },
+  "rilis_pribadi": {
+    "checklist": [
+      "Release signing dengan keystore sendiri dan cadangannya",
+      "Uji di HP Android fisik",
+      "Backup dan restore teruji",
+      "Pelaporan crash tanpa data pribadi",
+      "Versi dan changelog internal"
+    ]
+  },
+  "risiko": [
+    {
+      "risiko": "Cakupan sangat besar (20 fase) dan semangat menurun",
+      "mitigasi": "Pakai aplikasi sejak Fase 4; urutkan modul berdasarkan seberapa sering benar-benar dipakai; modul prioritas rendah boleh dilewati"
+    },
+    {
+      "risiko": "RLS salah konfigurasi membocorkan atau merusak data",
+      "mitigasi": "Tes pgTAP di Fase 3, sebelum modul sensitif"
+    },
+    {
+      "risiko": "Notifikasi tidak muncul di sebagian perangkat Android",
+      "mitigasi": "Panduan izin dalam aplikasi dan uji di HP sendiri"
+    },
+    {
+      "risiko": "Bug zona waktu dan pengulangan",
+      "mitigasi": "UTC di database, tes khusus tanggal, day_start_hour terpusat"
+    },
+    {
+      "risiko": "Saldo dompet tidak cocok dengan transaksi",
+      "mitigasi": "Saldo dihitung, bukan disimpan; uji pgTAP konsistensi"
+    },
+    {
+      "risiko": "Kehilangan data (HP hilang, proyek Supabase terhapus)",
+      "mitigasi": "Backup berkala di luar Supabase dan restore yang sudah diuji"
+    },
+    {
+      "risiko": "Integrasi Google Calendar dua arah menghasilkan duplikat atau konflik",
+      "mitigasi": "Mulai dari baca saja (F-CAL-05) sebelum dua arah"
+    },
+    {
+      "risiko": "Tanpa internet aplikasi tidak bisa dipakai",
+      "mitigasi": "Banner koneksi, tombol coba lagi, draft sementara, dan notifikasi lokal tetap berjalan dari jadwal terakhir"
+    },
+    {
+      "risiko": "Supabase satu-satunya salinan data; proyek gratis dapat dijeda bila lama tidak aktif dan tidak punya backup otomatis yang bisa diandalkan",
+      "mitigasi": "Pakai rutin, ekspor JSON berkala ke luar Supabase, dan pertimbangkan paket berbayar bila data sudah penting (cek halaman harga Supabase terbaru)"
+    }
+  ],
+  "pertanyaan_terbuka": [
+    "Apakah catatan makan (F-HLT-05) ingin dipertahankan?",
+    "Apakah Kebiasaan dan Tugas digabung di satu tab atau dipisah?",
+    "Apakah jurnal satu entri per hari atau bebas banyak entri?",
+    "Apakah perlu dukungan beberapa mata uang, atau cukup rupiah?",
+    "Apakah ada modul yang ingin diturunkan atau dilewati supaya jadwal lebih realistis?",
+    "Paket Supabase apa yang dipakai (gratis atau berbayar), dan bagaimana jadwal backup di luar Supabase?"
+  ]
+}

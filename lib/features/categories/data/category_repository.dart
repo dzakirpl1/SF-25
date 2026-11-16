@@ -33,7 +33,7 @@ class CategoryRepository {
     String? color,
   }) async {
     final user = _client.auth.currentUser;
-    if (user == null) throw AppError('Pengguna tidak terautentikasi');
+    if (user == null) throw const AppError('Pengguna tidak terautentikasi');
 
     try {
       final res = await _client
@@ -58,13 +58,10 @@ class CategoryRepository {
     String? color,
   }) async {
     try {
-      await _client
-          .from('note_categories')
-          .update({
-            'name': name.trim(),
-            if (color != null) 'color': color,
-          })
-          .eq('id', id);
+      await _client.from('note_categories').update({
+        'name': name.trim(),
+        if (color != null) 'color': color,
+      }).eq('id', id);
     } catch (e) {
       throw AppError(AppError.mapMessage(e), originalError: e);
     }

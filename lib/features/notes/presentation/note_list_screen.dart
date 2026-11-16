@@ -32,21 +32,35 @@ class _NoteListScreenState extends ConsumerState<NoteListScreen> {
     final notesAsync = ref.watch(noteListProvider);
     final categoriesAsync = ref.watch(categoryListProvider);
     final currentFilter = ref.watch(noteFilterProvider);
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Catatan'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.all_inbox_rounded),
+            tooltip: 'Inbox & Triase',
+            onPressed: () => context.push('/inbox'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.delete_sweep_outlined),
+            tooltip: 'Tempat Sampah',
+            onPressed: () => context.push('/trash'),
+          ),
+          IconButton(
             icon: Icon(
-              currentFilter.includeArchived ? Icons.inventory_2 : Icons.inventory_2_outlined,
+              currentFilter.includeArchived
+                  ? Icons.inventory_2
+                  : Icons.inventory_2_outlined,
             ),
-            tooltip: currentFilter.includeArchived ? 'Sembunyikan Arsip' : 'Tampilkan Arsip',
+            tooltip: currentFilter.includeArchived
+                ? 'Sembunyikan Arsip'
+                : 'Tampilkan Arsip',
             onPressed: () {
-              ref.read(noteFilterProvider.notifier).state = currentFilter.copyWith(
-                    includeArchived: !currentFilter.includeArchived,
-                  );
+              ref.read(noteFilterProvider.notifier).state =
+                  currentFilter.copyWith(
+                includeArchived: !currentFilter.includeArchived,
+              );
             },
           ),
           IconButton(
@@ -60,7 +74,8 @@ class _NoteListScreenState extends ConsumerState<NoteListScreen> {
         children: [
           // Search Bar
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -76,7 +91,8 @@ class _NoteListScreenState extends ConsumerState<NoteListScreen> {
                         },
                       )
                     : null,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               ),
               onChanged: (val) {
                 ref.read(noteFilterProvider.notifier).state =
@@ -159,7 +175,8 @@ class _NoteListScreenState extends ConsumerState<NoteListScreen> {
                 return RefreshIndicator(
                   onRefresh: () async => ref.refresh(noteListProvider),
                   child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     itemCount: notes.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
@@ -253,22 +270,30 @@ class _NoteCard extends ConsumerWidget {
                     children: [
                       IconButton(
                         icon: Icon(
-                          note.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+                          note.isPinned
+                              ? Icons.push_pin
+                              : Icons.push_pin_outlined,
                           size: 18,
                         ),
                         tooltip: note.isPinned ? 'Lepas Pin' : 'Pin Catatan',
                         onPressed: () {
-                          ref.read(noteActionsProvider.notifier).togglePin(note.id, note.isPinned);
+                          ref
+                              .read(noteActionsProvider.notifier)
+                              .togglePin(note.id, note.isPinned);
                         },
                       ),
                       IconButton(
                         icon: Icon(
-                          note.isArchived ? Icons.unarchive_outlined : Icons.archive_outlined,
+                          note.isArchived
+                              ? Icons.unarchive_outlined
+                              : Icons.archive_outlined,
                           size: 18,
                         ),
                         tooltip: note.isArchived ? 'Batal Arsip' : 'Arsipkan',
                         onPressed: () {
-                          ref.read(noteActionsProvider.notifier).toggleArchive(note.id, note.isArchived);
+                          ref
+                              .read(noteActionsProvider.notifier)
+                              .toggleArchive(note.id, note.isArchived);
                         },
                       ),
                       IconButton(
@@ -278,12 +303,15 @@ class _NoteCard extends ConsumerWidget {
                           final confirmed = await ConfirmDialog.show(
                             context,
                             title: 'Hapus Catatan',
-                            message: 'Pindahkan catatan "${note.displayTitle}" ke tempat sampah?',
+                            message:
+                                'Pindahkan catatan "${note.displayTitle}" ke tempat sampah?',
                             confirmLabel: 'Hapus',
                             isDestructive: true,
                           );
                           if (confirmed) {
-                            ref.read(noteActionsProvider.notifier).softDelete(note.id);
+                            ref
+                                .read(noteActionsProvider.notifier)
+                                .softDelete(note.id);
                           }
                         },
                       ),

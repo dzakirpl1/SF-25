@@ -10,7 +10,8 @@ final authStateProvider = StreamProvider<AuthState>((ref) {
 
 final userProfileProvider = FutureProvider<UserProfile?>((ref) async {
   final authState = ref.watch(authStateProvider);
-  final user = authState.value?.session?.user ?? ref.watch(authRepositoryProvider).currentUser;
+  final user = authState.value?.session?.user ??
+      ref.watch(authRepositoryProvider).currentUser;
   if (user == null) return null;
   return ref.watch(authRepositoryProvider).fetchProfile();
 });
@@ -43,6 +44,7 @@ class AuthController extends StateNotifier<AsyncValue<void>> {
   }
 }
 
-final authControllerProvider = StateNotifierProvider<AuthController, AsyncValue<void>>((ref) {
+final authControllerProvider =
+    StateNotifierProvider<AuthController, AsyncValue<void>>((ref) {
   return AuthController(ref.watch(authRepositoryProvider));
 });

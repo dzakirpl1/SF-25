@@ -10,7 +10,8 @@ import '../../../shared/widgets/confirm_dialog.dart';
 class CategoryScreen extends ConsumerWidget {
   const CategoryScreen({super.key});
 
-  void _showAddEditDialog(BuildContext context, WidgetRef ref, [NoteCategory? category]) {
+  void _showAddEditDialog(BuildContext context, WidgetRef ref,
+      [NoteCategory? category]) {
     final controller = TextEditingController(text: category?.name ?? '');
     showDialog(
       context: context,
@@ -38,7 +39,9 @@ class CategoryScreen extends ConsumerWidget {
               if (category == null) {
                 await ref.read(categoryListProvider.notifier).addCategory(name);
               } else {
-                await ref.read(categoryListProvider.notifier).updateCategory(category.id, name);
+                await ref
+                    .read(categoryListProvider.notifier)
+                    .updateCategory(category.id, name);
               }
             },
             child: const Text('Simpan'),
@@ -92,7 +95,8 @@ class CategoryScreen extends ConsumerWidget {
               return Card(
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
                     child: Icon(
                       Icons.folder_outlined,
                       color: Theme.of(context).colorScheme.primary,
@@ -117,17 +121,21 @@ class CategoryScreen extends ConsumerWidget {
                           final confirmed = await ConfirmDialog.show(
                             context,
                             title: 'Hapus Kategori',
-                            message: 'Hapus kategori "${cat.name}"? Kategori hanya bisa dihapus jika tidak dipakai catatan aktif.',
+                            message:
+                                'Hapus kategori "${cat.name}"? Kategori hanya bisa dihapus jika tidak dipakai catatan aktif.',
                             confirmLabel: 'Hapus',
                             isDestructive: true,
                           );
                           if (!confirmed) return;
 
                           try {
-                            await ref.read(categoryListProvider.notifier).deleteCategory(cat.id);
+                            await ref
+                                .read(categoryListProvider.notifier)
+                                .deleteCategory(cat.id);
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Kategori berhasil dihapus')),
+                                const SnackBar(
+                                    content: Text('Kategori berhasil dihapus')),
                               );
                             }
                           } catch (e) {
@@ -135,7 +143,8 @@ class CategoryScreen extends ConsumerWidget {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(e.toString()),
-                                  backgroundColor: Theme.of(context).colorScheme.error,
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.error,
                                 ),
                               );
                             }

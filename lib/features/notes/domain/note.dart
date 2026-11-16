@@ -34,7 +34,9 @@ class Note {
     final lines = content.trim().split('\n');
     if (lines.isNotEmpty && lines.first.trim().isNotEmpty) {
       final firstLine = lines.first.trim();
-      return firstLine.length > 40 ? '${firstLine.substring(0, 40)}...' : firstLine;
+      return firstLine.length > 40
+          ? '${firstLine.substring(0, 40)}...'
+          : firstLine;
     }
     return 'Catatan Tanpa Judul';
   }
@@ -47,8 +49,12 @@ class Note {
       title: json['title'] as String?,
       content: json['content'] as String? ?? '',
       isPinned: json['is_pinned'] as bool? ?? false,
-      archivedAt: json['archived_at'] != null ? DateTime.parse(json['archived_at'] as String) : null,
-      deletedAt: json['deleted_at'] != null ? DateTime.parse(json['deleted_at'] as String) : null,
+      archivedAt: json['archived_at'] != null
+          ? DateTime.parse(json['archived_at'] as String)
+          : null,
+      deletedAt: json['deleted_at'] != null
+          ? DateTime.parse(json['deleted_at'] as String)
+          : null,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );

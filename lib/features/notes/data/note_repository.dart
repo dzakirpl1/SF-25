@@ -21,7 +21,11 @@ class NoteRepository {
     if (user == null) return [];
 
     try {
-      var query = _client.from('notes').select().eq('user_id', user.id).isFilter('deleted_at', null);
+      var query = _client
+          .from('notes')
+          .select()
+          .eq('user_id', user.id)
+          .isFilter('deleted_at', null);
 
       if (!includeArchived) {
         query = query.isFilter('archived_at', null);
@@ -36,7 +40,9 @@ class NoteRepository {
         query = query.or('title.ilike.%$term%,content.ilike.%$term%');
       }
 
-      final data = await query.order('is_pinned', ascending: false).order('updated_at', ascending: false);
+      final data = await query
+          .order('is_pinned', ascending: false)
+          .order('updated_at', ascending: false);
 
       return (data as List).map((e) => Note.fromJson(e)).toList();
     } catch (e) {
@@ -51,7 +57,7 @@ class NoteRepository {
     bool isPinned = false,
   }) async {
     final user = _client.auth.currentUser;
-    if (user == null) throw AppError('Pengguna tidak terautentikasi');
+    if (user == null) throw const AppError('Pengguna tidak terautentikasi');
 
     try {
       final now = DateTime.now().toUtc().toIso8601String();
@@ -84,7 +90,7 @@ class NoteRepository {
     required DateTime lastKnownUpdatedAt,
   }) async {
     final user = _client.auth.currentUser;
-    if (user == null) throw AppError('Pengguna tidak terautentikasi');
+    if (user == null) throw const AppError('Pengguna tidak terautentikasi');
 
     try {
       final now = DateTime.now().toUtc().toIso8601String();
@@ -126,7 +132,8 @@ class NoteRepository {
   Future<void> toggleArchive(String id, bool currentlyArchived) async {
     try {
       await _client.from('notes').update({
-        'archived_at': currentlyArchived ? null : DateTime.now().toUtc().toIso8601String(),
+        'archived_at':
+            currentlyArchived ? null : DateTime.now().toUtc().toIso8601String(),
         'updated_at': DateTime.now().toUtc().toIso8601String(),
       }).eq('id', id);
     } catch (e) {

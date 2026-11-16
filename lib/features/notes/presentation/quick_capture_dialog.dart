@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../inbox/presentation/inbox_controller.dart';
 import 'note_controller.dart';
 
 class QuickCaptureDialog extends ConsumerStatefulWidget {
@@ -20,6 +21,7 @@ class QuickCaptureDialog extends ConsumerStatefulWidget {
 
 class _QuickCaptureDialogState extends ConsumerState<QuickCaptureDialog> {
   final _contentController = TextEditingController();
+  bool _saveToInbox = true;
 
   @override
   void dispose() {
@@ -33,21 +35,33 @@ class _QuickCaptureDialogState extends ConsumerState<QuickCaptureDialog> {
 
     Navigator.of(context).pop();
 
-    final success = await ref.read(noteActionsProvider.notifier).createNote(
-          content: text,
+    if (_saveToInbox) {
+      final success = await ref
+          .read(inboxActionsProvider.notifier)
+          .addItem(text, source: 'quick_capture');
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Tersimpan ke Inbox untuk dipilah nanti')),
         );
-
-    if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Catatan tersimpan via Quick Capture')),
-      );
+      }
+    } else {
+      final success = await ref
+          .read(noteActionsProvider.notifier)
+          .createNote(content: text);
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Catatan langsung tersimpan')),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isSaving = ref.watch(noteActionsProvider).isLoading;
+    final isSaving = ref.watch(noteActionsProvider).isLoading ||
+        ref.watch(inboxActionsProvider).isLoading;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -91,9 +105,25 @@ class _QuickCaptureDialogState extends ConsumerState<QuickCaptureDialog> {
               maxLines: 4,
               minLines: 2,
               decoration: const InputDecoration(
-                hintText: 'Tulis ide, tugas, atau catatan singkat...',
+                hintText: 'Tulis ide, tugas, atau tangkapan cepat...',
               ),
               onSubmitted: (_) => _submit(),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                ChoiceChip(
+                  label: const Text('Ke Inbox (Triase)'),
+                  selected: _saveToInbox,
+                  onSelected: (val) => setState(() => _saveToInbox = true),
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: const Text('Langsung Catatan'),
+                  selected: !_saveToInbox,
+                  onSelected: (val) => setState(() => _saveToInbox = false),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             FilledButton.icon(
@@ -105,7 +135,7 @@ class _QuickCaptureDialogState extends ConsumerState<QuickCaptureDialog> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.send_rounded),
-              label: const Text('Simpan Cepat'),
+              label: Text(_saveToInbox ? 'Tampung ke Inbox' : 'Simpan Catatan'),
             ),
           ],
         ),

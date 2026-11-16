@@ -3,17 +3,24 @@ class AppError implements Exception {
   final String? code;
   final dynamic originalError;
 
-  AppError(this.message, {this.code, this.originalError});
+  const AppError(this.message, {this.code, this.originalError});
 
   @override
   String toString() => message;
 
+  factory AppError.fromPostgres(dynamic error) {
+    return AppError(mapMessage(error), originalError: error);
+  }
+
   static String mapMessage(dynamic error) {
     final str = error.toString().toLowerCase();
-    if (str.contains('invalid login credentials') || str.contains('invalid_grant')) {
+    if (str.contains('invalid login credentials') ||
+        str.contains('invalid_grant')) {
       return 'Email atau kata sandi tidak valid.';
     }
-    if (str.contains('network') || str.contains('socketexception') || str.contains('failed to connect')) {
+    if (str.contains('network') ||
+        str.contains('socketexception') ||
+        str.contains('failed to connect')) {
       return 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
     }
     if (str.contains('jwt expired') || str.contains('pgrst301')) {
