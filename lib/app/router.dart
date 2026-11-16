@@ -27,6 +27,10 @@ import '../features/habits/presentation/habits_screen.dart';
 import '../features/habits/presentation/habit_editor_screen.dart';
 import '../features/habits/presentation/routine_editor_screen.dart';
 import '../features/reminders/presentation/reminders_screen.dart';
+import '../features/finance/domain/wallet.dart';
+import '../features/finance/presentation/finance_screen.dart';
+import '../features/finance/presentation/wallet_editor_screen.dart';
+import '../features/finance/presentation/transaction_editor_screen.dart';
 import 'shell_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -176,6 +180,21 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/reminders',
         builder: (context, state) => const RemindersScreen(),
+      ),
+      GoRoute(
+        path: '/finance',
+        builder: (context, state) => const FinanceScreen(),
+      ),
+      GoRoute(
+        path: '/finance/wallet/edit',
+        builder: (context, state) {
+          final wallet = state.extra as Wallet?;
+          return WalletEditorScreen(initialWallet: wallet);
+        },
+      ),
+      GoRoute(
+        path: '/finance/transaction/edit',
+        builder: (context, state) => const TransactionEditorScreen(),
       ),
     ],
   );

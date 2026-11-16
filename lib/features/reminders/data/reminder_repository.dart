@@ -64,15 +64,21 @@ class ReminderRepository {
     final userId = _currentUserId;
     if (userId == null) throw const AppError('Sesi pengguna tidak valid');
 
-    final snoozeTime =
-        DateTime.now().toUtc().add(Duration(minutes: minutes)).toIso8601String();
+    final snoozeTime = DateTime.now()
+        .toUtc()
+        .add(Duration(minutes: minutes))
+        .toIso8601String();
 
     try {
-      await _client.from('reminders').update({
-        'status': 'snoozed',
-        'snoozed_until': snoozeTime,
-        'updated_at': DateTime.now().toUtc().toIso8601String(),
-      }).eq('id', id).eq('user_id', userId);
+      await _client
+          .from('reminders')
+          .update({
+            'status': 'snoozed',
+            'snoozed_until': snoozeTime,
+            'updated_at': DateTime.now().toUtc().toIso8601String(),
+          })
+          .eq('id', id)
+          .eq('user_id', userId);
     } on PostgrestException catch (e) {
       throw AppError.fromPostgres(e);
     } catch (e) {
@@ -86,10 +92,14 @@ class ReminderRepository {
     if (userId == null) throw const AppError('Sesi pengguna tidak valid');
 
     try {
-      await _client.from('reminders').update({
-        'status': 'dismissed',
-        'updated_at': DateTime.now().toUtc().toIso8601String(),
-      }).eq('id', id).eq('user_id', userId);
+      await _client
+          .from('reminders')
+          .update({
+            'status': 'dismissed',
+            'updated_at': DateTime.now().toUtc().toIso8601String(),
+          })
+          .eq('id', id)
+          .eq('user_id', userId);
     } on PostgrestException catch (e) {
       throw AppError.fromPostgres(e);
     } catch (e) {

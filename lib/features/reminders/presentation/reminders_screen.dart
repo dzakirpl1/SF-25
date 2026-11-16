@@ -206,9 +206,8 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                     r.title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      decoration: r.isDismissed
-                          ? TextDecoration.lineThrough
-                          : null,
+                      decoration:
+                          r.isDismissed ? TextDecoration.lineThrough : null,
                     ),
                   ),
                   subtitle: Column(

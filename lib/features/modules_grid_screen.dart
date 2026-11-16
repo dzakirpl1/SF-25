@@ -66,8 +66,8 @@ class ModulesGridScreen extends StatelessWidget {
       {
         'title': 'Keuangan (Money Tracker)',
         'icon': Icons.account_balance_wallet_outlined,
-        'route': null,
-        'fase': 'Fase 9'
+        'route': '/finance',
+        'fase': 'Fase 9 (Aktif)'
       },
       {
         'title': 'Fokus & Waktu',

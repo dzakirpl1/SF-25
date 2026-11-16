@@ -10,10 +10,10 @@ void main() {
     });
 
     test('parseNominal membersihkan karakter non-angka', () {
-      expect(CurrencyUtils.parseNominal('Rp 1.250.000'), 1250000);
+      expect(CurrencyUtils.parseNominal('Rp 1.250.000'), BigInt.from(1250000));
       expect(CurrencyUtils.parseNominal('Rp 50.000,00'),
-          5000000); // 5000000 if digits only
-      expect(CurrencyUtils.parseNominal('abc'), 0);
+          BigInt.from(5000000)); // 5000000 if digits only
+      expect(CurrencyUtils.parseNominal('abc'), BigInt.zero);
     });
   });
 }

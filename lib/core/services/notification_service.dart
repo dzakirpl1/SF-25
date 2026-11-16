@@ -77,15 +77,21 @@ class NotificationService {
     final userId = _currentUserId;
     if (userId == null) throw const AppError('Pengguna tidak terautentikasi');
 
-    final snoozeTime =
-        DateTime.now().toUtc().add(Duration(minutes: minutes)).toIso8601String();
+    final snoozeTime = DateTime.now()
+        .toUtc()
+        .add(Duration(minutes: minutes))
+        .toIso8601String();
 
     try {
-      await _client.from('reminders').update({
-        'status': 'snoozed',
-        'snoozed_until': snoozeTime,
-        'updated_at': DateTime.now().toUtc().toIso8601String(),
-      }).eq('id', reminderId).eq('user_id', userId);
+      await _client
+          .from('reminders')
+          .update({
+            'status': 'snoozed',
+            'snoozed_until': snoozeTime,
+            'updated_at': DateTime.now().toUtc().toIso8601String(),
+          })
+          .eq('id', reminderId)
+          .eq('user_id', userId);
     } catch (e) {
       throw AppError(e.toString());
     }
@@ -97,10 +103,14 @@ class NotificationService {
     if (userId == null) throw const AppError('Pengguna tidak terautentikasi');
 
     try {
-      await _client.from('reminders').update({
-        'status': 'dismissed',
-        'updated_at': DateTime.now().toUtc().toIso8601String(),
-      }).eq('id', reminderId).eq('user_id', userId);
+      await _client
+          .from('reminders')
+          .update({
+            'status': 'dismissed',
+            'updated_at': DateTime.now().toUtc().toIso8601String(),
+          })
+          .eq('id', reminderId)
+          .eq('user_id', userId);
     } catch (e) {
       throw AppError(e.toString());
     }
