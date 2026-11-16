@@ -11,7 +11,8 @@ class CalendarPlaceholderScreen extends StatelessWidget {
       body: const EmptyView(
         icon: Icons.calendar_month_outlined,
         title: 'Modul Kalender',
-        subtitle: 'Direncanakan pada Fase 6 sesuai master blueprint.\n(Tampilan bulan/minggu/hari, agenda, dan blok waktu).',
+        subtitle:
+            'Direncanakan pada Fase 6 sesuai master blueprint.\n(Tampilan bulan/minggu/hari, agenda, dan blok waktu).',
       ),
     );
   }
