@@ -34,15 +34,43 @@ class SettingsRepository {
     }
   }
 
-  Future<void> updateSettings(Map<String, dynamic> updates) async {
+  Future<void> updateSettings(
+    Map<String, dynamic> updates, {
+    DateTime? lastKnownUpdatedAt,
+  }) async {
     final user = _client.auth.currentUser;
     if (user == null) return;
 
     try {
-      await _client
-          .from('user_settings')
-          .update(updates)
-          .eq('user_id', user.id);
+      var query =
+          _client.from('user_settings').update(updates).eq('user_id', user.id);
+
+      if (lastKnownUpdatedAt != null) {
+        query = query.lte('updated_at', lastKnownUpdatedAt.toIso8601String());
+      }
+
+      await query;
+    } catch (e) {
+      throw AppError(AppError.mapMessage(e), originalError: e);
+    }
+  }
+
+  Future<void> updateDisplayName(String name,
+      {DateTime? lastKnownUpdatedAt}) async {
+    final user = _client.auth.currentUser;
+    if (user == null) return;
+
+    try {
+      var query = _client.from('profiles').update({
+        'display_name': name.trim(),
+        'updated_at': DateTime.now().toUtc().toIso8601String(),
+      }).eq('id', user.id);
+
+      if (lastKnownUpdatedAt != null) {
+        query = query.lte('updated_at', lastKnownUpdatedAt.toIso8601String());
+      }
+
+      await query;
     } catch (e) {
       throw AppError(AppError.mapMessage(e), originalError: e);
     }
