@@ -11,7 +11,8 @@ class TasksPlaceholderScreen extends StatelessWidget {
       body: const EmptyView(
         icon: Icons.check_circle_outline_rounded,
         title: 'Modul Tugas & Proyek',
-        subtitle: 'Direncanakan pada Fase 4 sesuai master blueprint.\n(Tenggat, prioritas, subtugas, matriks Eisenhower).',
+        subtitle:
+            'Direncanakan pada Fase 4 sesuai master blueprint.\n(Tenggat, prioritas, subtugas, matriks Eisenhower).',
       ),
     );
   }
