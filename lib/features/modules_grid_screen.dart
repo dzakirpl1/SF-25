@@ -72,8 +72,8 @@ class ModulesGridScreen extends StatelessWidget {
       {
         'title': 'Fokus & Waktu',
         'icon': Icons.timer_outlined,
-        'route': null,
-        'fase': 'Fase 11'
+        'route': '/focus',
+        'fase': 'Fase 11 (Aktif)'
       },
       {
         'title': 'Jurnal & Refleksi',

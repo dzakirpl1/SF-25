@@ -9,6 +9,7 @@ import 'unit/recurrence_engine_test.dart' as recurrence_tests;
 import 'unit/reminder_test.dart' as reminder_tests;
 import 'unit/finance_core_test.dart' as finance_core_tests;
 import 'unit/finance_advanced_test.dart' as finance_advanced_tests;
+import 'unit/focus_time_test.dart' as focus_time_tests;
 
 void main() {
   currency_tests.main();
@@ -22,4 +23,5 @@ void main() {
   reminder_tests.main();
   finance_core_tests.main();
   finance_advanced_tests.main();
+  focus_time_tests.main();
 }

@@ -34,6 +34,8 @@ import '../features/finance/presentation/transaction_editor_screen.dart';
 import '../features/finance/presentation/budget_screen.dart';
 import '../features/finance/presentation/savings_screen.dart';
 import '../features/finance/presentation/debt_screen.dart';
+import '../features/focus/presentation/focus_screen.dart';
+import '../features/focus/presentation/time_tracker_screen.dart';
 import 'shell_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -210,6 +212,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/finance/debts',
         builder: (context, state) => const DebtScreen(),
+      ),
+      GoRoute(
+        path: '/focus',
+        builder: (context, state) => const FocusScreen(),
+      ),
+      GoRoute(
+        path: '/time',
+        builder: (context, state) => const TimeTrackerScreen(),
       ),
     ],
   );
