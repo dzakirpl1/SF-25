@@ -21,6 +21,9 @@ Proyek ini dibangun menggunakan **Flutter** dan **Supabase PostgreSQL** berdasar
 | **8** | Pengingat & Notifikasi | **SELESAI** | Pengingat terjadwal, aksi tunda/selesai, skema token FCM/MCP ([docs/FASE_08_PENGINGAT_NOTIFIKASI.md](file:///d:/Codee/self-management/docs/FASE_08_PENGINGAT_NOTIFIKASI.md)) |
 | **9** | Money Tracker Inti | **SELESAI** | Dompet multi-rekening, kategori finansial, transaksi, saldo dinamis ([docs/FASE_09_MONEY_TRACKER_INTI.md](file:///d:/Codee/self-management/docs/FASE_09_MONEY_TRACKER_INTI.md)) |
 | **10** | Keuangan Lanjutan | **SELESAI** | Anggaran bulanan, target tabungan & setoran, manajemen utang piutang ([docs/FASE_10_KEUANGAN_LANJUTAN.md](file:///d:/Codee/self-management/docs/FASE_10_KEUANGAN_LANJUTAN.md)) |
+| **11** | Fokus & Waktu | **SELESAI** | Pomodoro timer, sesi fokus terhubung tugas, timesheet aktivitas ([docs/FASE_11_FOKUS_WAKTU.md](file:///d:/Codee/self-management/docs/FASE_11_FOKUS_WAKTU.md)) |
+| **12** | Jurnal, Mood, & Sasaran | **SELESAI** | Jurnal harian, kilas balik 1 tahun, mood tracker, dan sasaran OKRs ([docs/FASE_12_JURNAL_MOOD_GOALS.md](file:///d:/Codee/self-management/docs/FASE_12_JURNAL_MOOD_GOALS.md)) |
+| **13** | Kesehatan & Pengobatan | **SELESAI** | Pelacak air minum, kualitas tidur, olahraga, jadwal obat & suplemen ([docs/FASE_13_KESEHATAN_PENGOBATAN.md](file:///d:/Codee/self-management/docs/FASE_13_KESEHATAN_PENGOBATAN.md)) |
 
 ---
 

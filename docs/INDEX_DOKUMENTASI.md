@@ -19,6 +19,9 @@ Dokumentasi ini adalah sumber kebenaran (*single source of truth*) pengembangan 
 | **8** | **Pengingat & Notifikasi** | [FASE_08_PENGINGAT_NOTIFIKASI.md](FASE_08_PENGINGAT_NOTIFIKASI.md) | ✅ Terimplementasi & Lulus Tes Lokal |
 | **9** | **Money Tracker Inti** | [FASE_09_MONEY_TRACKER_INTI.md](FASE_09_MONEY_TRACKER_INTI.md) | ✅ Terimplementasi & Lulus Tes Lokal |
 | **10** | **Keuangan Lanjutan (Anggaran, Tabungan, & Utang)** | [FASE_10_KEUANGAN_LANJUTAN.md](FASE_10_KEUANGAN_LANJUTAN.md) | ✅ Terimplementasi & Lulus Tes Lokal |
+| **11** | **Fokus & Waktu (Pomodoro & Timesheet)** | [FASE_11_FOKUS_WAKTU.md](FASE_11_FOKUS_WAKTU.md) | ✅ Terimplementasi & Lulus Tes Lokal |
+| **12** | **Jurnal, Mood, Refleksi, & Sasaran (OKRs)** | [FASE_12_JURNAL_MOOD_GOALS.md](FASE_12_JURNAL_MOOD_GOALS.md) | ✅ Terimplementasi & Lulus Tes Lokal |
+| **13** | **Kesehatan, Kebugaran, & Pengobatan** | [FASE_13_KESEHATAN_PENGOBATAN.md](FASE_13_KESEHATAN_PENGOBATAN.md) | ✅ Terimplementasi & Lulus Tes Lokal |
 
 ---
 

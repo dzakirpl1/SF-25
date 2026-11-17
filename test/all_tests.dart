@@ -11,6 +11,7 @@ import 'unit/finance_core_test.dart' as finance_core_tests;
 import 'unit/finance_advanced_test.dart' as finance_advanced_tests;
 import 'unit/focus_time_test.dart' as focus_time_tests;
 import 'unit/reflection_goals_test.dart' as reflection_goals_tests;
+import 'unit/health_test.dart' as health_tests;
 
 void main() {
   currency_tests.main();
@@ -26,4 +27,5 @@ void main() {
   finance_advanced_tests.main();
   focus_time_tests.main();
   reflection_goals_tests.main();
+  health_tests.main();
 }

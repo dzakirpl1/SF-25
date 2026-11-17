@@ -39,6 +39,9 @@ import '../features/focus/presentation/time_tracker_screen.dart';
 import '../features/reflection/presentation/journal_screen.dart';
 import '../features/reflection/presentation/mood_screen.dart';
 import '../features/reflection/presentation/goals_screen.dart';
+import '../features/health/presentation/health_screen.dart';
+import '../features/health/presentation/workouts_screen.dart';
+import '../features/health/presentation/medications_screen.dart';
 import 'shell_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -235,6 +238,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/goals',
         builder: (context, state) => const GoalsScreen(),
+      ),
+      GoRoute(
+        path: '/health',
+        builder: (context, state) => const HealthScreen(),
+      ),
+      GoRoute(
+        path: '/health/workouts',
+        builder: (context, state) => const WorkoutsScreen(),
+      ),
+      GoRoute(
+        path: '/health/medications',
+        builder: (context, state) => const MedicationsScreen(),
       ),
     ],
   );

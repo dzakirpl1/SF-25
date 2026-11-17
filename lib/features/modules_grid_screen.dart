@@ -84,8 +84,8 @@ class ModulesGridScreen extends StatelessWidget {
       {
         'title': 'Kesehatan',
         'icon': Icons.favorite_outline_rounded,
-        'route': null,
-        'fase': 'Fase 13'
+        'route': '/health',
+        'fase': 'Fase 13 (Aktif)'
       },
       {
         'title': 'Belajar & Media',
