@@ -36,6 +36,9 @@ import '../features/finance/presentation/savings_screen.dart';
 import '../features/finance/presentation/debt_screen.dart';
 import '../features/focus/presentation/focus_screen.dart';
 import '../features/focus/presentation/time_tracker_screen.dart';
+import '../features/reflection/presentation/journal_screen.dart';
+import '../features/reflection/presentation/mood_screen.dart';
+import '../features/reflection/presentation/goals_screen.dart';
 import 'shell_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -220,6 +223,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/time',
         builder: (context, state) => const TimeTrackerScreen(),
+      ),
+      GoRoute(
+        path: '/journal',
+        builder: (context, state) => const JournalScreen(),
+      ),
+      GoRoute(
+        path: '/mood',
+        builder: (context, state) => const MoodScreen(),
+      ),
+      GoRoute(
+        path: '/goals',
+        builder: (context, state) => const GoalsScreen(),
       ),
     ],
   );

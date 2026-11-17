@@ -78,8 +78,8 @@ class ModulesGridScreen extends StatelessWidget {
       {
         'title': 'Jurnal & Refleksi',
         'icon': Icons.auto_stories_outlined,
-        'route': null,
-        'fase': 'Fase 12'
+        'route': '/journal',
+        'fase': 'Fase 12 (Aktif)'
       },
       {
         'title': 'Kesehatan',
